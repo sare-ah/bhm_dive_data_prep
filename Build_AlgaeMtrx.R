@@ -67,7 +67,7 @@ UsePackages( pkgs=c("dplyr","reshape") )
 # 1. Read input data & look-up tables
 #######################################
 # Read in tables that were extracted from the MS Access db using the script ExtractDataFromMSAccess.R
-spp <- read.csv( "./Data/TargetSpecies/AlgaeObs_updated.csv", header=T, sep="," )
+spp <- read.csv( "./Data/UpdatedObservations/AlgaeObs_updated.csv", header=T, sep="," )
 
 ################################
 # 2. Build Species X Site table

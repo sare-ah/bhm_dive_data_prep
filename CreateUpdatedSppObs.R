@@ -121,6 +121,7 @@ spp$SpType[spp$Species_Code=="DB" & spp$SpType=="I"] <- "A"
 spp$SpType[spp$Species_Code=="GI" & spp$SpType=="I"] <- "A"
 spp$SpType[spp$Species_Code=="GR" & spp$SpType=="I"] <- "A"
 spp$SpType[spp$Species_Code=="LA" & spp$SpType=="I"] <- "A"
+spp$SpType[spp$Species_Code=="PH" & spp$SpType=="I"] <- "A"
 
 # Typos that were removed, do not correspond with any code
 spp$Species_Code[spp$Species_Code=="GSC" & spp$SpType=="I"] <- "nontarget"
@@ -130,6 +131,9 @@ spp$Species_Code[spp$Species_Code=="TH" & spp$SpType=="I"] <- "nontarget"
 spp$Species_Code[spp$Species_Code=="UA" & spp$SpType=="I"] <- "nontarget"
 spp$Species_Code[spp$Species_Code=="YZ" & spp$SpType=="I"] <- "nontarget"
 spp$Species_Code[spp$Species_Code=="MO" & spp$SpType=="I"] <- "nontarget"
+
+# Typo that was not feasibly observed at depth 
+spp$Specie_Code[spp$Species_Code=="OR"& spp$SpType=="I"] <- "nontarget" #Pacific Oyster
 
 n <- unique(spp$Species_Code)
 length(n)
@@ -183,11 +187,11 @@ spp <- filter( spp, Species_Code!="nontarget" )
 
 # Create invert observations and save
 invert <- dplyr::filter( spp, SpType=="I")
-write.csv(invert, "./Data/TargetSpecies/InvertObs_updated.csv")
+write.csv(invert, "./Data/UpdatedObservations/InvertObs_updated.csv")
 
 # Create invert observations and save
 algae <- dplyr::filter( spp, SpType=="A")
-write.csv(algae, "./Data/TargetSpecies/AlgaeObs_updated.csv")
+write.csv(algae, "./Data/UpdatedObservations/AlgaeObs_updated.csv")
 
 # Save updated species observations
-write.csv(spp, "./Data/TargetSpecies/SpeciesObs_updated.csv")
+write.csv(spp, "./Data/UpdatedObservations/SpeciesObs_updated.csv")
