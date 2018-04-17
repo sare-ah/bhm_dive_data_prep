@@ -70,7 +70,7 @@ names(spp)[names(spp) == 'Species'] <- 'Species_Code'
 # spp <- dplyr::filter( spp, SpType=="I" )
 
 n <- unique(spp$Species)
-length(n)
+#length(n)
 
 ####################################################################
 # 2. Recode some invertebrate observations to match the data sheets
