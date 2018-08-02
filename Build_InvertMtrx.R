@@ -114,7 +114,7 @@ sppDepth <- unique( sppDepth )
 # Build species X depth category matrix
 sppDepth <- reshape2::dcast( sppDepth, TransDepth~Species_Code,  fun=length, value.var = "Species_Code" )
 #sppDepth$TransDepth <- substr(sppDepth$TransDepth, ) # This line throws an error
-write.csv(sppDepth, "./Data/SpeciesBy_matrices/InvertsByDepthCategory.csv")
+write.csv(sppDepth, "./Data/SpeciesBy_matrices/InvertsByDepthCategory.csv", row.names = FALSE)
 
 #####################################
 # 5. Build Species X Substrate table

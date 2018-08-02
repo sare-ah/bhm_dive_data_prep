@@ -21,3 +21,6 @@ Build final output figures and tables
 
 6. MakeSiteSHP.R
 Build a shapefile for the survey data
+
+7. CalculateSppPrevalence.R
+Calculates species prevalence using the Species X Depth category table

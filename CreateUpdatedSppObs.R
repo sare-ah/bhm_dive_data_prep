@@ -133,7 +133,7 @@ spp$Species_Code[spp$Species_Code=="YZ" & spp$SpType=="I"] <- "nontarget"
 spp$Species_Code[spp$Species_Code=="MO" & spp$SpType=="I"] <- "nontarget"
 
 # Typo that was not feasibly observed at depth 
-spp$Specie_Code[spp$Species_Code=="OR"& spp$SpType=="I"] <- "nontarget" #Pacific Oyster
+spp$Species_Code[spp$Species_Code=="OR"& spp$SpType=="I"] <- "nontarget" #Pacific Oyster
 
 n <- unique(spp$Species_Code)
 length(n)

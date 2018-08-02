@@ -69,6 +69,8 @@ UsePackages( pkgs=c("dplyr","reshape") )
 #######################################
 # Read in tables that were extracted from the MS Access db using the script ExtractDataFromMSAccess.R
 spp <- read.csv( "./Data/UpdatedObservations/AlgaeObs_updated.csv", header=T, sep="," )
+hdrs <- read.csv( "./Data/ExtractedData/Headers.csv", header=T, sep="," )
+quads <- read.csv( "./Data/ExtractedData/Quadrat.csv", header=T, sep="," )
 
 ################################
 # 2. Build Species X Site table
@@ -109,7 +111,7 @@ sppDepth <- dplyr::select( sppDepth, TransDepth, Species_Code )
 sppDepth <- unique( sppDepth )
 # Build species X depth category matrix
 sppDepth <- reshape2::dcast( sppDepth, TransDepth~Species_Code,  fun=length, value.var = "Species_Code" )
-write.csv(sppDepth, "./Data/SpeciesBy_matrices/AlgaeByDepthCategory.csv")
+write.csv(sppDepth, "./Data/SpeciesBy_matrices/AlgaeByDepthCategory.csv", row.names = FALSE)
 
 #####################################
 # 5. Build Species X Substrate table
