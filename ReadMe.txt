@@ -27,3 +27,6 @@ Calculates species prevalence using the Species X Depth category table
 
 8. JoinSpatialPoints.R
 Joins species observation data to "spatialized points" from Bottom Patches
+
+9. BuildInSituObs.R
+Extracts depth and slope by quadrat; creates matrix with percent cover for all substrate categories by quadrat
