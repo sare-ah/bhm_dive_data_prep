@@ -24,3 +24,6 @@ Build a shapefile for the survey data
 
 7. CalculateSppPrevalence.R
 Calculates species prevalence using the Species X Depth category table
+
+8. JoinSpatialPoints.R
+Joins species observation data to "spatialized points" from Bottom Patches
