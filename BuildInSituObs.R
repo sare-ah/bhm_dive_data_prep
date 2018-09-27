@@ -70,19 +70,24 @@ depth$StartDepth <- ifelse( depth$Quadrat==0, depth$CorDepthM,lag(depth$CorDepth
 depth$EndDepth <- depth$CorDepthM
 
 # Calculate mean depth for each quadrat
-depth$MeanDepth <- (depth$StartDepth+depth$EndDepth)/2
+depth$MeanDepth.m <- (depth$StartDepth+depth$EndDepth)/2
 
 # Calculate slope for each quadrat using the arc-tangent
 depth$Elev.Diff <- depth$StartDepth-depth$EndDepth
 depth$Slope <- atan2(depth$Elev.Diff,5) 
 
 # Remove unnecessary columns
-depth <- dplyr::select(depth, HKey, Quadrat, MeanDepth, Slope)
+depth <- dplyr::select(depth, HKey, Quadrat, MeanDepth.m, Slope)
 # Remove quadrat 0 
 depth <- filter(depth, Quadrat!=0)
 
-# What to do with records with slope greater than 1.0 or less than -1.0??
-
+# What to do with records with slope greater than 1.0 or less than -1.0??? There are 5 cases in the dataset.
+# Set slope to either 1.0 or -1.0 to correct for typo or instances where the swell exacerbated the difference 
+# between two height recordings or where divers swam beyond the transect line and incorrectly guestimated 
+# 5 m quadrat length
+depth$Slope[depth$Slope > 1.0] <- 1.0
+depth$Slope[depth$Slope < -1.0] <- -1.0  
+  
 ### 3. Summarise substrate for each quadrat ###
 ###############################################
 substrate <- dplyr::select(quad, HKey, Quadrat, Substrate1, Sub1Pct, Substrate2, Sub2Pct, Substrate3, Sub3Pct )
