@@ -26,7 +26,7 @@ Sys.getenv("R_ARCH")
 # Then you will have to open and close R for the changes to take effect
 
 # Set working directory
-setwd("F:/R/MY_PROJECTS/DiveSurveys_DataPrep")
+setwd("C:/Users/daviessa/Documents/R/MY_PROJECTS/DiveSurveys_DataPrep")
 
 ################ Functions #####################################
 ################################################################

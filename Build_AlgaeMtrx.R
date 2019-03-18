@@ -31,7 +31,6 @@ Sys.getenv("R_ARCH")
 
 # Set working directory
 setwd("C:/Users/daviessa/Documents/R/MY_PROJECTS/DiveSurveys_DataPrep")
-
 ################ Functions #####################################
 ################################################################
 
