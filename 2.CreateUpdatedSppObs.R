@@ -2,6 +2,9 @@
 # Benthic Habitat Mapping Dive Survey Data Summary
 # 
 # Objective:  Update species observations to fix typos and recode non-target species and save new csv files
+#             Creates three csv files: InvertObs_updated.csv
+#                                      AlgaeObs_updated.csv
+#                                      SpeciesObs_updated.csv                       
 #
 # Author:     Sarah Davies
 #             Sarah.Davies@dfo-mpo.gc.ca
@@ -22,7 +25,7 @@ Sys.getenv("R_ARCH")
 # Then you will have to open and close R for the changes to take effect
 
 # Set working directory
-setwd("C:/Users/daviessa/Documents/R/MY_PROJECTS/DiveSurveys_DataPrep")
+setwd("F:/R/MY_PROJECTS/DiveSurveys_DataPrep")
 
 ################ Functions #####################################
 ################################################################
@@ -192,6 +195,9 @@ write.csv(invert, "./Data/UpdatedObservations/InvertObs_updated.csv")
 # Create invert observations and save
 algae <- dplyr::filter( spp, SpType=="A")
 write.csv(algae, "./Data/UpdatedObservations/AlgaeObs_updated.csv")
+
+# Add Invert/Algae to species code field
+spp$spp_cde <- paste0(spp$Species_Code,"_",spp$SpType)
 
 # Save updated species observations
 write.csv(spp, "./Data/UpdatedObservations/SpeciesObs_updated.csv")

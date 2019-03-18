@@ -24,7 +24,7 @@ Sys.getenv("R_ARCH")
 # Then you will have to open and close R for the changes to take effect
 
 # Set working directory
-setwd("C:/Users/daviessa/Documents/R/MY_PROJECTS/DiveSurveys_DataPrep")
+setwd("F:/R/MY_PROJECTS/DiveSurveys_DataPrep")
 
 ################ Functions #####################################
 ################################################################
@@ -78,6 +78,7 @@ depth$Slope <- atan2(depth$Elev.Diff,5)
 
 # Remove unnecessary columns
 depth <- dplyr::select(depth, HKey, Quadrat, MeanDepth.m, Slope)
+
 # Remove quadrat 0 
 depth <- filter(depth, Quadrat!=0)
 
@@ -125,4 +126,5 @@ final <- dplyr::full_join(depth, sub.cast, by=c("HKey", "Quadrat"))
 
 # Save in situ observations
 write.csv(final, "./Data/ExtractedData/InSituObs.csv")
+write.csv(depth, "./Data/ExtractedData/Calc.Depth.Slope.csv")
 

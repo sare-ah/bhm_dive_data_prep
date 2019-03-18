@@ -3,30 +3,27 @@ Dive Surveys data prep
 1. ExtractDataFromMSAccess.R
 Read in MS Access data; csv files will be created in the ExtractedData folder
 
-2. Substrate_summarySCUBA.R & Substrate_summaryDropCam.R
-Build figures for substrate by proportion of sites
-
-3. CreateUpdatedSppObs.R
+2. CreateUpdatedSppObs.R
 Edit known errors/typos in the extracted dataset; build separate algae and invert tables 
 
-4. Build_AlgaeMtrx.R & Build_InvertMtrx.R
+3. Build_AlgaeMtrx.R & Build_InvertMtrx.R
 Build species by site matrices: 
 * Species X Quadrat table
 * Species X Depth category table
 * Species X Substrate table
 * Species X Substrate & Depth table
 
-5. Algae_summarySCUBA.R & Invert_summarySCUBA.R
+4. Algae_summarySCUBA.R & Invert_summarySCUBA.R
 Build final output figures and tables
 
-6. MakeSiteSHP.R
+5. MakeSiteSHP.R
 Build a shapefile for the survey data
 
-7. CalculateSppPrevalence.R
+6. CalculateSppPrevalence.R
 Calculates species prevalence using the Species X Depth category table
 
-8. JoinSpatialPoints.R
+7. JoinSpatialPoints.R
 Joins species observation data to "spatialized points" from Bottom Patches
 
-9. BuildInSituObs.R
+8. BuildInSituObs.R
 Extracts depth and slope by quadrat; creates matrix with percent cover for all substrate categories by quadrat
