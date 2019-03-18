@@ -3,6 +3,8 @@
 # 
 # Objective:  Create a shapefile for WCTSS SCUBA surveys of NCC & HG
 #
+# Requires:   Run 1.ExtractDataFromMSAccess.R script
+#
 # Author:     Sarah Davies
 #             Sarah.Davies@dfo-mpo.gc.ca
 #             250-756-7124

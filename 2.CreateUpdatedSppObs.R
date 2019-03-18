@@ -4,7 +4,9 @@
 # Objective:  Update species observations to fix typos and recode non-target species and save new csv files
 #             Creates three csv files: InvertObs_updated.csv
 #                                      AlgaeObs_updated.csv
-#                                      SpeciesObs_updated.csv                       
+#                                      SpeciesObs_updated.csv   
+#
+# Requires:   Run 1.ExtractDataFromMSAccess.R script
 #
 # Author:     Sarah Davies
 #             Sarah.Davies@dfo-mpo.gc.ca
@@ -25,8 +27,7 @@ Sys.getenv("R_ARCH")
 # Then you will have to open and close R for the changes to take effect
 
 # Set working directory
-setwd("F:/R/MY_PROJECTS/DiveSurveys_DataPrep")
-setwd("C:/Users/daviessa/Documents/R/MY_PROJECTS/DiveSurveys_DataPrep")
+setwd("C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep")
 
 ################ Functions #####################################
 ################################################################
@@ -126,6 +127,7 @@ spp$SpType[spp$Species_Code=="GI" & spp$SpType=="I"] <- "A"
 spp$SpType[spp$Species_Code=="GR" & spp$SpType=="I"] <- "A"
 spp$SpType[spp$Species_Code=="LA" & spp$SpType=="I"] <- "A"
 spp$SpType[spp$Species_Code=="PH" & spp$SpType=="I"] <- "A"
+spp$SpType[spp$Species_Code=="DG" & spp$SpType=="I"] <- "A"
 
 # Typos that were removed, do not correspond with any code
 spp$Species_Code[spp$Species_Code=="GSC" & spp$SpType=="I"] <- "nontarget"
@@ -135,6 +137,7 @@ spp$Species_Code[spp$Species_Code=="TH" & spp$SpType=="I"] <- "nontarget"
 spp$Species_Code[spp$Species_Code=="UA" & spp$SpType=="I"] <- "nontarget"
 spp$Species_Code[spp$Species_Code=="YZ" & spp$SpType=="I"] <- "nontarget"
 spp$Species_Code[spp$Species_Code=="MO" & spp$SpType=="I"] <- "nontarget"
+spp$Species_Code[spp$Species_Code=="PG" & spp$SpType=="I"] <- "nontarget"
 
 # Typo that was not feasibly observed at depth 
 spp$Species_Code[spp$Species_Code=="OR"& spp$SpType=="I"] <- "nontarget" #Pacific Oyster
@@ -167,7 +170,7 @@ spp$SpType[spp$Species_Code=="HF" & spp$SpType=="A"] <- "I" # Hydrocoral
 spp$SpType[spp$Species_Code=="OB" & spp$SpType=="A"] <- "I" # Other barnacle
 spp$SpType[spp$Species_Code=="PU" & spp$SpType=="A"] <- "I" # Purple urchin 
 spp$SpType[spp$Species_Code=="RS" & spp$SpType=="A"] <- "I" # Rock scallop
-
+spp$SpType[spp$Species_Code=="SI" & spp$SpType=="A"] <- "I" # Swimming anemone
 
 # Observations that are likely typos
 spp$Species_Code[spp$Species_Code=="AN" & spp$SpType=="A"] <- "nontarget"
@@ -182,12 +185,16 @@ spp$Species_Code[spp$Species_Code=="RG" & spp$SpType=="A"] <- "nontarget"
 spp$Species_Code[spp$Species_Code=="RM" & spp$SpType=="A"] <- "nontarget"
 spp$Species_Code[spp$Species_Code=="SY" & spp$SpType=="A"] <- "nontarget"
 spp$Species_Code[spp$Species_Code=="*" & spp$SpType=="A"] <- "nontarget"
+spp$Species_Code[spp$Species_Code=="SU" & spp$SpType=="A"] <- "nontarget"
 
 n <- unique(spp$Species)
 length(n)
 
 # Remove nontarget species codes
 spp <- filter( spp, Species_Code!="nontarget" )
+
+# Trim white space around Species code
+spp$Species_Code <- trimws(spp$Species_Code)
 
 # Create invert observations and save
 invert <- dplyr::filter( spp, SpType=="I")
@@ -198,7 +205,8 @@ algae <- dplyr::filter( spp, SpType=="A")
 write.csv(algae, "./Data/UpdatedObservations/AlgaeObs_updated.csv")
 
 # Add Invert/Algae to species code field
-spp$spp_cde <- paste0(spp$Species_Code,"_",spp$SpType)
+spp$spp_cde <- paste0(spp$SpType,"_",spp$Species_Code)
 
 # Save updated species observations
 write.csv(spp, "./Data/UpdatedObservations/SpeciesObs_updated.csv")
+cat("Created updated Invert, Alage, Species observations files")

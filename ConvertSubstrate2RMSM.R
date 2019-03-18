@@ -1,7 +1,9 @@
-#######################################################################################################################
+######################################################################################################################
 # Benthic Habitat Mapping Dive Survey Data Summary
 # 
 # Objective:  Update substrate observations to assign each quadrat to one of four categories (Rock, mixed, sand, mud)
+#
+# Requires:   Run 1.ExtractDataFromMSAccess.R script
 #
 # Author:     Sarah Davies
 #             Sarah.Davies@dfo-mpo.gc.ca

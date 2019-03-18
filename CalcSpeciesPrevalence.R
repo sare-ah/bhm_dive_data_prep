@@ -4,8 +4,9 @@
 # Objective:  Determine species prevalence using benthic habitat mapping species tables organized by depth category
 #             
 # Background: Species presence/absence and substrate data is stored in the WC_Dive_Master.mdb database
-#             Data was edited for typos extra with CreateUpdateSppObs.R script
-#             Data was pooled by depth category and transect using Build_AlgaeMtrx.R & Build_InvertMtrx.R 
+# 
+# Requires:   Run 1.ExtractDataFromMSAccess.R, 2.CreateUpdateSppObs.R, 
+#             3a.Algae_BuildMtrx.R, and 3b.Invert_BuildMtrx.R scripts
 # 
 # Author:     Sarah Davies
 #             Sarah.Davies@dfo-mpo.gc.ca
@@ -26,7 +27,7 @@ Sys.getenv("R_ARCH")
 # Then you will have to open and close R for the changes to take effect
 
 # Set working directory
-setwd("C:/Users/daviessa/Documents/R/MY_PROJECTS/DiveSurveys_DataPrep")
+setwd("C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep")
 
 # Functions 
 # =========
@@ -47,8 +48,6 @@ UsePackages <- function( pkgs, update=FALSE, locn="http://cran.rstudio.com/" ) {
 }  # End UsePackages function
 
 # Make packages available
-UsePackages( pkgs=c("dplyr") )
-# Make packages available
 UsePackages( pkgs=c("dplyr","reshape", "vegan", "stringr", "plyr", "tidyr") ) 
 
 
@@ -62,11 +61,12 @@ UsePackages( pkgs=c("dplyr","reshape", "vegan", "stringr", "plyr", "tidyr") )
 # Read in algae & invert tables
 invert <- read.csv( "./Data/SpeciesBy_matrices/InvertsByDepthCategory.csv", header=T, sep=",", stringsAsFactors = FALSE )
 algae <- read.csv( "./Data/SpeciesBy_matrices/AlgaeByDepthCategory.csv", header=T, sep=",", stringsAsFactors = FALSE )
+sp.nme <- read.csv("./Data/LookupTbls/SpeciesLookUpTbl.csv", header=T, sep=",", stringsAsFactors = FALSE)
 
 # Combine tables
-colnames(invert) <- paste( colnames(invert), "I", sep = "_")
+colnames(invert) <- paste("I", colnames(invert), sep = "_")
 colnames(invert)[1] <- "TransDepth"
-colnames(algae) <- paste( colnames(algae), "A", sep = "_")
+colnames(algae) <- paste("A", colnames(algae), sep = "_")
 colnames(algae)[1] <- "TransDepth"
 all.spp <- dplyr::full_join(invert, algae, by="TransDepth")
 all.spp[is.na(all.spp)] <- 0
@@ -77,13 +77,22 @@ n <- (nrow(all.spp)-1)
 # Determine number of species per transect/depth category combinations
 sppOnly <- dplyr::select(all.spp, -TransDepth)
 
-# Build a dataframe with species counts and write to file
+# Build a dataframe with species counts and add species name
 sppNmes <- colnames(sppOnly)
 cnts <- colSums(sppOnly)
-sppCnts <- data.frame(sppNmes, cnts)
-sppCnts$prevalence <- (round( sppCnts$cnts/n, digits=3 )*100)
-sppCnts <- sppCnts[order(sppCnts$prevalence),]
-write.csv(sppCnts, file="./Data/SpeciesPrevalence/SpeciesPrevalence.csv", row.names = FALSE)
- 
+sppPreval <- data.frame(sppNmes, cnts)
+sppPreval$prevalence <- (round( sppPreval$cnts/n, digits=3 )*100)
+sppPreval <- sppPreval[order(sppPreval$prevalence),]
+colnames(sppPreval)<- c("Species_Code","counts","prevalence")
+sp.nme$Species_Code <- as.character(sp.nme$Species_Code)
+sppPreval$Species_Code <- as.character(sppPreval$Species_Code)
+sppPreval <- dplyr::left_join(sppPreval, sp.nme, by="Species_Code" )
+
+# Write to file
+write.csv(sppPreval, file="./Data/SpeciesPrevalence/SpeciesPrevalence.csv", row.names = FALSE)
+
+# To Do:
+# Make plots of species prevalence
+# Species vs. species-groups
 
 

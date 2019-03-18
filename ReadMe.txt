@@ -1,20 +1,17 @@
 Dive Surveys data prep
 
-1. ExtractDataFromMSAccess.R
+1.ExtractDataFromMSAccess.R
 Read in MS Access data; csv files will be created in the ExtractedData folder
 
-2. CreateUpdatedSppObs.R
+2.CreateUpdatedSppObs.R
 Edit known errors/typos in the extracted dataset; build separate algae and invert tables 
 
-3. Build_AlgaeMtrx.R & Build_InvertMtrx.R
+3a.Algae_BuildMtrx.R & 3b.Invert_BuildMtrx.R
 Build species by site matrices: 
 * Species X Quadrat table
 * Species X Depth category table
 * Species X Substrate table
 * Species X Substrate & Depth table
-
-4. Algae_summarySCUBA.R & Invert_summarySCUBA.R
-Build final output figures and tables
 
 5. MakeSiteSHP.R
 Build a shapefile for the survey data

@@ -1,7 +1,11 @@
 #######################################################################################################################
 # Benthic Habitat Mapping Dive Survey Sites, joined to depth bin locations
 # 
-# Objective:  Join sample records to "spatialized points" from bottom patches (i.e., coordinates for individual depth bins, not just sites)
+# Objective:  Join sample records to "spatialized points" from bottom patches 
+#             (i.e., coordinates for individual depth bins, not just sites)
+#
+# Requires:   Run 1.ExtractDataFromMSAccess.R, 2.CreateUpdateSppObs.R, 
+#             3a.Algae_BuildMtrx.R, and 3b.Invert_BuildMtrx.R scripts
 #
 # Author:     Katie Gale
 #             Katie.Gale@dfo-mpo.gc.ca

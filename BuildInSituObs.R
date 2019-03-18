@@ -3,7 +3,7 @@
 # 
 # Objective:  Build a matrix of environmental variables collected at the quadrat level by divers
 #
-# Notes:      This script uses the output of ExtractDataFromMSAccess.R; this script may need to be rerun first
+# Requires:   Run 1.ExtractDataFromMSAccess.R script
 #
 # Author:     Sarah Davies
 #             Sarah.Davies@dfo-mpo.gc.ca

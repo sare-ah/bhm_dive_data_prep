@@ -7,7 +7,9 @@
 #             Species X Depth category table
 #             Species X Substrate table
 #             Species X Substrate & Depth table
-#             
+# 
+# Requires:   Run 1.ExtractDataFromMSAccess.R script and 2.CreateUpdatedSppObs.R
+# 
 # Background: Species presence/absence and substrate data is stored in the WC_Dive_Master.mdb database
 #             Data was edited for typos extra with CreateUpdateSppObs.R script
 # 
@@ -30,8 +32,7 @@ Sys.getenv("R_ARCH")
 # Then you will have to open and close R for the changes to take effect
 
 # Set working directory
-setwd("C:/Users/daviessa/Documents/R/MY_PROJECTS/DiveSurveys_DataPrep")
-setwd("C:/Users/daviessa/Documents/R/MY_PROJECTS/DiveSurveys_DataPrep")
+setwd("C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep")
 ################ Functions #####################################
 ################################################################
 

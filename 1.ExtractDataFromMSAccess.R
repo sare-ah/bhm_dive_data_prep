@@ -26,8 +26,7 @@ Sys.getenv("R_ARCH")
 # Then you will have to open and close R for the changes to take effect
 
 # Set working directory
-setwd("F:/R/MY_PROJECTS/DiveSurveys_DataPrep")
-setwd("C:/Users/daviessa/Documents/R/MY_PROJECTS/DiveSurveys_DataPrep")
+setwd("C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep")
 
 ################ Functions #####################################
 ################################################################
@@ -78,7 +77,7 @@ UsePackages( pkgs=c("RODBC") )
 # Add a function to read in all the data
 
 # Set path to the Access database
-db <- "K:/World_Class_Habitat_Mapping/WC_Dive_Master.mdb"
+db <- "T:/Dive_Surveys/Database/BHM_DiveSurveys_Current.mdb"
 
 # Extract five tables from the db
 headers <- GrabDat( db, tbl="1-Headers" )
