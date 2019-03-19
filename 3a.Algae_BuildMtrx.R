@@ -10,7 +10,8 @@
 # 
 # Requires:   Run 1.ExtractDataFromMSAccess.R script and 2.CreateUpdatedSppObs.R
 # 
-# Background: Species presence/absence and substrate data is stored in the WC_Dive_Master.mdb database
+# Background: Species presence/absence and substrate data is stored in 
+#             T:/Dive_Surveys/Database/BHM_DiveSurveys_Current.mdb
 #             Data was edited for typos extra with CreateUpdateSppObs.R script
 # 
 # Author:     Sarah Davies

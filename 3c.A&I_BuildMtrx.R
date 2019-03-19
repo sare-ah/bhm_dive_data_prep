@@ -97,7 +97,7 @@ spp$TransQuad <- paste( spp$HKey, spp$Quadrat, sep="_" )
 sppQuad <- dplyr::select( spp, TransQuad, Spp_cde_type )
 # Build species X quadrat matrix
 sppQuad <- reshape2::dcast( sppQuad, TransQuad~Spp_cde_type, fun=length, value.var = "Spp_cde_type" )
-write.csv(sppQuad, "./Data/SpeciesBy_matrices/AllSpeciessByQuadrat.csv")
+write.csv(sppQuad, "./Data/SpeciesBy_matrices/AllSpeciesByQuadrat.csv")
 
 ##########################################
 # 4. Build Species X Depth category table
@@ -117,7 +117,7 @@ sppDepth <- unique( sppDepth )
 # Build species X depth category matrix
 sppDepth <- reshape2::dcast( sppDepth, TransDepth~Spp_cde_type,  fun=length, value.var = "Spp_cde_type" )
 #sppDepth$TransDepth <- substr(sppDepth$TransDepth, ) # This line throws an error
-write.csv(sppDepth, "./Data/SpeciesBy_matrices/AllSpeciessByDepthCategory.csv", row.names = FALSE)
+write.csv(sppDepth, "./Data/SpeciesBy_matrices/AllSpeciesByDepthCategory.csv", row.names = FALSE)
 
 #####################################
 # 5. Build Species X Substrate table
@@ -143,7 +143,7 @@ sppSub <- na.omit(sppSub)
 # Build species X depth category matrix
 sppSub <- reshape2::dcast( sppSub, Spp_cde_type~Substrate,  fun=length, value.var = "Spp_cde_type" )
 
-write.csv(sppSub, "./Data/SpeciesBy_matrices/AllSpeciessByPrimarySubstrate.csv")
+write.csv(sppSub, "./Data/SpeciesBy_matrices/AllSpeciesByPrimarySubstrate.csv")
 
 #############################################
 # 6. Build Species X Substrate & Depth table
@@ -163,4 +163,4 @@ sppSubDepth <- dplyr::select( sppSubDepth, trns.dpth.sub, Spp_cde_type )
 sppSubDepth <- unique( sppSubDepth )
 # Build species X Depth and Substrate matrix
 sppSubDepth <- reshape2::dcast( sppSubDepth, trns.dpth.sub~Spp_cde_type, fun=length, value.var = "Spp_cde_type" )
-write.csv( sppSubDepth, "./Data/SpeciesBy_matrices/AllSpeciessByDepthAndSubstrate.csv")
+write.csv( sppSubDepth, "./Data/SpeciesBy_matrices/AllSpeciesByDepthAndSubstrate.csv")
