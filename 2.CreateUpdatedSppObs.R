@@ -205,7 +205,7 @@ algae <- dplyr::filter( spp, SpType=="A")
 write.csv(algae, "./Data/UpdatedObservations/AlgaeObs_updated.csv")
 
 # Add Invert/Algae to species code field
-spp$spp_cde <- paste0(spp$SpType,"_",spp$Species_Code)
+spp$Spp_cde_type <- paste0(spp$SpType,"_",spp$Species_Code)
 
 # Save updated species observations
 write.csv(spp, "./Data/UpdatedObservations/SpeciesObs_updated.csv")

@@ -81,7 +81,7 @@ sppOnly <- dplyr::select(all.spp, -TransDepth)
 sppNmes <- colnames(sppOnly)
 cnts <- colSums(sppOnly)
 sppPreval <- data.frame(sppNmes, cnts)
-sppPreval$prevalence <- (round( sppPreval$cnts/n, digits=3 )*100)
+sppPreval$prevalence <- (round( sppPreval$cnts/n, digits=3 )*100) # Prevalence of species over all sites
 sppPreval <- sppPreval[order(sppPreval$prevalence),]
 colnames(sppPreval)<- c("Species_Code","counts","prevalence")
 sp.nme$Species_Code <- as.character(sp.nme$Species_Code)
@@ -94,5 +94,10 @@ write.csv(sppPreval, file="./Data/SpeciesPrevalence/SpeciesPrevalence.csv", row.
 # To Do:
 # Make plots of species prevalence
 # Species vs. species-groups
+
+# # Build a histogram
+# #hist(sppPreval$prevalence)
+# hist(sppPreval$prevalence, freq=FALSE, main="Density plot", xlim=c(0,60),ylim = c(0,0.1))
+# hist(sppPreval$prevalence, xlim=c(0,60),ylim = c(0,80))
 
 
