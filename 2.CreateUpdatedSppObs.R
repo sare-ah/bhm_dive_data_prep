@@ -69,10 +69,10 @@ spp$Species <- as.character(spp$Species)
 spp$SpType <- toupper(spp$SpType) # capitalize
 spp$Species[spp$Species=="C L"] <- "CL" # correct a typo
 
-# Change column name
-names(spp)[names(spp) == 'Species'] <- 'Species_Code'
-# algae <- dplyr::filter( spp, SpType=="A" )
-# spp <- dplyr::filter( spp, SpType=="I" )
+# # Change column name
+# names(spp)[names(spp) == 'Species'] <- 'Species'
+# # algae <- dplyr::filter( spp, SpType=="A" )
+# # spp <- dplyr::filter( spp, SpType=="I" )
 
 n <- unique(spp$Species)
 #length(n)
@@ -83,118 +83,118 @@ n <- unique(spp$Species)
 # Recode some species - based on notes found in Habitat Mapping database
 # These species were either only recorded in 2013 or recorded as a species group in later surveys
 # Comments explain what observations are being recoded to and counts of dive sites with presence
-spp$Species_Code[spp$Species_Code=="AB" & spp$SpType=="I"] <- "OB"  # Acorn barnacle = Barnacle - other --- chk yrs
-spp$Species_Code[spp$Species_Code=="BB" & spp$SpType=="I"] <- "BRF" # Blue encrusting bryozoan(2) = Bryozoan flat
-spp$Species_Code[spp$Species_Code=="BS" & spp$SpType=="I"] <- "SPE" # Boot sponge = Sponge erect
-spp$Species_Code[spp$Species_Code=="TS" & spp$SpType=="I"] <- "SPE" # Trumpet sponge = Sponge erect
-spp$Species_Code[spp$Species_Code=="GS" & spp$SpType=="I"] <- "SPE" # Glove sponge = Sponge erect
-spp$Species_Code[spp$Species_Code=="HS" & spp$SpType=="I"] <- "SH"  # Humpback shrimp(4) = Shrimp
-spp$Species_Code[spp$Species_Code=="NS" & spp$SpType=="I"] <- "SH"  # Coonstripe shrimp(13) = Shrimp
-spp$Species_Code[spp$Species_Code=="SN" & spp$SpType=="I"] <- "SH"  # Spot prawn(2) = Shrimp
-spp$Species_Code[spp$Species_Code=="SW" & spp$SpType=="I"] <- "SP"  # Sea whip(1) = sea pen
-spp$Species_Code[spp$Species_Code=="FT" & spp$SpType=="I"] <- "SL"  # Chelyosoma productum(1) = tunicate - solitary - other
+spp$Species[spp$Species=="AB" & spp$SpType=="I"] <- "OB"  # Acorn barnacle = Barnacle - other --- chk yrs
+spp$Species[spp$Species=="BB" & spp$SpType=="I"] <- "BRF" # Blue encrusting bryozoan(2) = Bryozoan flat
+spp$Species[spp$Species=="BS" & spp$SpType=="I"] <- "SPE" # Boot sponge = Sponge erect
+spp$Species[spp$Species=="TS" & spp$SpType=="I"] <- "SPE" # Trumpet sponge = Sponge erect
+spp$Species[spp$Species=="GS" & spp$SpType=="I"] <- "SPE" # Glove sponge = Sponge erect
+spp$Species[spp$Species=="HS" & spp$SpType=="I"] <- "SH"  # Humpback shrimp(4) = Shrimp
+spp$Species[spp$Species=="NS" & spp$SpType=="I"] <- "SH"  # Coonstripe shrimp(13) = Shrimp
+spp$Species[spp$Species=="SN" & spp$SpType=="I"] <- "SH"  # Spot prawn(2) = Shrimp
+spp$Species[spp$Species=="SW" & spp$SpType=="I"] <- "SP"  # Sea whip(1) = sea pen
+spp$Species[spp$Species=="FT" & spp$SpType=="I"] <- "SL"  # Chelyosoma productum(1) = tunicate - solitary - other
 
-n <- unique(spp$Species_Code)
+n <- unique(spp$Species)
 length(n)
 
 # Non-target species
-spp$Species_Code[spp$Species_Code=="LP" & spp$SpType=="I"] <- "nontarget"  # Six-armed star(6) = " "
-spp$Species_Code[spp$Species_Code=="BC" & spp$SpType=="I"] <- "nontarget"  # Butter clam (Saxidomus gigantea)(5) = ?
-spp$Species_Code[spp$Species_Code=="CO" & spp$SpType=="I"] <- "nontarget"  # Cockle (Clinocardium nuttallii)(7) = ?
-spp$Species_Code[spp$Species_Code=="XH" & spp$SpType=="I"] <- "nontarget"  # Stevens' hermit crab(5) = ?
-spp$Species_Code[spp$Species_Code=="KL" & spp$SpType=="I"] <- "nontarget"  # Limpets(4) - removed
-spp$Species_Code[spp$Species_Code=="TW" & spp$SpType=="I"] <- "nontarget"  # Calcareous tubeworm(36) - removed b/c ubiquitous
-spp$Species_Code[spp$Species_Code=="DA" & spp$SpType=="I"] <- "nontarget"  # Nudibranch (Dirona albolineata) - removed
-spp$Species_Code[spp$Species_Code=="OD" & spp$SpType=="I"] <- "nontarget"  # Nudibranch (Dirona pellucita) - removed
-spp$Species_Code[spp$Species_Code=="CN" & spp$SpType=="I"] <- "nontarget"  # Nudibranch (Hermissenda crassicornis) - removed
-spp$Species_Code[spp$Species_Code=="RT" & spp$SpType=="I"] <- "nontarget"  # Brown turban --- chk yrs
-spp$Species_Code[spp$Species_Code=="PC" & spp$SpType=="I"] <- "nontarget"  # Psolus --- chk yrs
-spp$Species_Code[spp$Species_Code=="SY" & spp$SpType=="I"] <- "nontarget"  # Spiny red star --- chk yrs
-spp$Species_Code[spp$Species_Code=="WU" & spp$SpType=="I"] <- "nontarget"  # White urchin --- chk yrs
+spp$Species[spp$Species=="LP" & spp$SpType=="I"] <- "nontarget"  # Six-armed star(6) = " "
+spp$Species[spp$Species=="BC" & spp$SpType=="I"] <- "nontarget"  # Butter clam (Saxidomus gigantea)(5) = ?
+spp$Species[spp$Species=="CO" & spp$SpType=="I"] <- "nontarget"  # Cockle (Clinocardium nuttallii)(7) = ?
+spp$Species[spp$Species=="XH" & spp$SpType=="I"] <- "nontarget"  # Stevens' hermit crab(5) = ?
+spp$Species[spp$Species=="KL" & spp$SpType=="I"] <- "nontarget"  # Limpets(4) - removed
+spp$Species[spp$Species=="TW" & spp$SpType=="I"] <- "nontarget"  # Calcareous tubeworm(36) - removed b/c ubiquitous
+spp$Species[spp$Species=="DA" & spp$SpType=="I"] <- "nontarget"  # Nudibranch (Dirona albolineata) - removed
+spp$Species[spp$Species=="OD" & spp$SpType=="I"] <- "nontarget"  # Nudibranch (Dirona pellucita) - removed
+spp$Species[spp$Species=="CN" & spp$SpType=="I"] <- "nontarget"  # Nudibranch (Hermissenda crassicornis) - removed
+spp$Species[spp$Species=="RT" & spp$SpType=="I"] <- "nontarget"  # Brown turban --- chk yrs
+spp$Species[spp$Species=="PC" & spp$SpType=="I"] <- "nontarget"  # Psolus --- chk yrs
+spp$Species[spp$Species=="SY" & spp$SpType=="I"] <- "nontarget"  # Spiny red star --- chk yrs
+spp$Species[spp$Species=="WU" & spp$SpType=="I"] <- "nontarget"  # White urchin --- chk yrs
 
-n <- unique(spp$Species_Code)
+n <- unique(spp$Species)
 length(n)
 
 # Species codes that are likely meant to be algae not inverts
-spp$SpType[spp$Species_Code=="AC" & spp$SpType=="I"] <- "A"
-spp$SpType[spp$Species_Code=="AF" & spp$SpType=="I"] <- "A"
-spp$SpType[spp$Species_Code=="BF" & spp$SpType=="I"] <- "A"
-spp$SpType[spp$Species_Code=="BH" & spp$SpType=="I"] <- "A"
-spp$SpType[spp$Species_Code=="BO" & spp$SpType=="I"] <- "A"
-spp$SpType[spp$Species_Code=="CL" & spp$SpType=="I"] <- "A"
-spp$SpType[spp$Species_Code=="DB" & spp$SpType=="I"] <- "A"
-spp$SpType[spp$Species_Code=="GI" & spp$SpType=="I"] <- "A"
-spp$SpType[spp$Species_Code=="GR" & spp$SpType=="I"] <- "A"
-spp$SpType[spp$Species_Code=="LA" & spp$SpType=="I"] <- "A"
-spp$SpType[spp$Species_Code=="PH" & spp$SpType=="I"] <- "A"
-spp$SpType[spp$Species_Code=="DG" & spp$SpType=="I"] <- "A"
+spp$SpType[spp$Species=="AC" & spp$SpType=="I"] <- "A"
+spp$SpType[spp$Species=="AF" & spp$SpType=="I"] <- "A"
+spp$SpType[spp$Species=="BF" & spp$SpType=="I"] <- "A"
+spp$SpType[spp$Species=="BH" & spp$SpType=="I"] <- "A"
+spp$SpType[spp$Species=="BO" & spp$SpType=="I"] <- "A"
+spp$SpType[spp$Species=="CL" & spp$SpType=="I"] <- "A"
+spp$SpType[spp$Species=="DB" & spp$SpType=="I"] <- "A"
+spp$SpType[spp$Species=="GI" & spp$SpType=="I"] <- "A"
+spp$SpType[spp$Species=="GR" & spp$SpType=="I"] <- "A"
+spp$SpType[spp$Species=="LA" & spp$SpType=="I"] <- "A"
+spp$SpType[spp$Species=="PH" & spp$SpType=="I"] <- "A"
+spp$SpType[spp$Species=="DG" & spp$SpType=="I"] <- "A"
 
 # Typos that were removed, do not correspond with any code
-spp$Species_Code[spp$Species_Code=="GSC" & spp$SpType=="I"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="JL" & spp$SpType=="I"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="PY" & spp$SpType=="I"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="TH" & spp$SpType=="I"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="UA" & spp$SpType=="I"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="YZ" & spp$SpType=="I"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="MO" & spp$SpType=="I"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="PG" & spp$SpType=="I"] <- "nontarget"
+spp$Species[spp$Species=="GSC" & spp$SpType=="I"] <- "nontarget"
+spp$Species[spp$Species=="JL" & spp$SpType=="I"] <- "nontarget"
+spp$Species[spp$Species=="PY" & spp$SpType=="I"] <- "nontarget"
+spp$Species[spp$Species=="TH" & spp$SpType=="I"] <- "nontarget"
+spp$Species[spp$Species=="UA" & spp$SpType=="I"] <- "nontarget"
+spp$Species[spp$Species=="YZ" & spp$SpType=="I"] <- "nontarget"
+spp$Species[spp$Species=="MO" & spp$SpType=="I"] <- "nontarget"
+spp$Species[spp$Species=="PG" & spp$SpType=="I"] <- "nontarget"
 
 # Typo that was not feasibly observed at depth 
-spp$Species_Code[spp$Species_Code=="OR"& spp$SpType=="I"] <- "nontarget" #Pacific Oyster
+spp$Species[spp$Species=="OR"& spp$SpType=="I"] <- "nontarget" #Pacific Oyster
 
-n <- unique(spp$Species_Code)
+n <- unique(spp$Species)
 length(n)
 
 #############################################################
 # 3. Recode some algae observations to match the data sheets
 #############################################################
 # Non-target species
-spp$Species_Code[spp$Species_Code=="AG" & spp$SpType=="A"] <- "nontarget"  # Agarum # OR is this a typo --- Red turban snail?
-spp$Species_Code[spp$Species_Code=="AL" & spp$SpType=="A"] <- "nontarget"  # Alaria 
-spp$Species_Code[spp$Species_Code=="BO" & spp$SpType=="A"] <- "nontarget"  # Bossiella 
-spp$Species_Code[spp$Species_Code=="DE" & spp$SpType=="A"] <- "nontarget"  # Desmarestia 
-spp$Species_Code[spp$Species_Code=="EN" & spp$SpType=="A"] <- "nontarget"  # Encrusting 
-spp$Species_Code[spp$Species_Code=="LA" & spp$SpType=="A"] <- "nontarget"  # Laminaria 
-spp$Species_Code[spp$Species_Code=="OP" & spp$SpType=="A"] <- "nontarget"  # Opuntella 
-spp$Species_Code[spp$Species_Code=="BP" & spp$SpType=="A"] <- "nontarget"  # Botryocladia pseudodichotoma
-spp$Species_Code[spp$Species_Code=="DG" & spp$SpType=="A"] <- "nontarget"  # Derbesia marina
+spp$Species[spp$Species=="AG" & spp$SpType=="A"] <- "nontarget"  # Agarum # OR is this a typo --- Red turban snail?
+spp$Species[spp$Species=="AL" & spp$SpType=="A"] <- "nontarget"  # Alaria 
+spp$Species[spp$Species=="BO" & spp$SpType=="A"] <- "nontarget"  # Bossiella 
+spp$Species[spp$Species=="DE" & spp$SpType=="A"] <- "nontarget"  # Desmarestia 
+spp$Species[spp$Species=="EN" & spp$SpType=="A"] <- "nontarget"  # Encrusting 
+spp$Species[spp$Species=="LA" & spp$SpType=="A"] <- "nontarget"  # Laminaria 
+spp$Species[spp$Species=="OP" & spp$SpType=="A"] <- "nontarget"  # Opuntella 
+spp$Species[spp$Species=="BP" & spp$SpType=="A"] <- "nontarget"  # Botryocladia pseudodichotoma
+spp$Species[spp$Species=="DG" & spp$SpType=="A"] <- "nontarget"  # Derbesia marina
 
 n <- unique(spp$Species)
 length(n)
 
 # Species codes that are likely meant to be inverts not algae
-# If they are non-target invertebrates, update the Species_Code too
-spp$SpType[spp$Species_Code=="BA" & spp$SpType=="A"] <- "I" # Brooding anemone
-spp$SpType[spp$Species_Code=="DC" & spp$SpType=="A"] <- "I" # Dungeness crab
-spp$SpType[spp$Species_Code=="HF" & spp$SpType=="A"] <- "I" # Hydrocoral
-spp$SpType[spp$Species_Code=="OB" & spp$SpType=="A"] <- "I" # Other barnacle
-spp$SpType[spp$Species_Code=="PU" & spp$SpType=="A"] <- "I" # Purple urchin 
-spp$SpType[spp$Species_Code=="RS" & spp$SpType=="A"] <- "I" # Rock scallop
-spp$SpType[spp$Species_Code=="SI" & spp$SpType=="A"] <- "I" # Swimming anemone
+# If they are non-target invertebrates, update the Species too
+spp$SpType[spp$Species=="BA" & spp$SpType=="A"] <- "I" # Brooding anemone
+spp$SpType[spp$Species=="DC" & spp$SpType=="A"] <- "I" # Dungeness crab
+spp$SpType[spp$Species=="HF" & spp$SpType=="A"] <- "I" # Hydrocoral
+spp$SpType[spp$Species=="OB" & spp$SpType=="A"] <- "I" # Other barnacle
+spp$SpType[spp$Species=="PU" & spp$SpType=="A"] <- "I" # Purple urchin 
+spp$SpType[spp$Species=="RS" & spp$SpType=="A"] <- "I" # Rock scallop
+spp$SpType[spp$Species=="SI" & spp$SpType=="A"] <- "I" # Swimming anemone
 
 # Observations that are likely typos
-spp$Species_Code[spp$Species_Code=="AN" & spp$SpType=="A"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="AT" & spp$SpType=="A"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="BR" & spp$SpType=="A"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="DR" & spp$SpType=="A"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="FY" & spp$SpType=="A"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="LD" & spp$SpType=="A"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="LM" & spp$SpType=="A"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="NE" & spp$SpType=="A"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="RG" & spp$SpType=="A"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="RM" & spp$SpType=="A"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="SY" & spp$SpType=="A"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="*" & spp$SpType=="A"] <- "nontarget"
-spp$Species_Code[spp$Species_Code=="SU" & spp$SpType=="A"] <- "nontarget"
+spp$Species[spp$Species=="AN" & spp$SpType=="A"] <- "nontarget"
+spp$Species[spp$Species=="AT" & spp$SpType=="A"] <- "nontarget"
+spp$Species[spp$Species=="BR" & spp$SpType=="A"] <- "nontarget"
+spp$Species[spp$Species=="DR" & spp$SpType=="A"] <- "nontarget"
+spp$Species[spp$Species=="FY" & spp$SpType=="A"] <- "nontarget"
+spp$Species[spp$Species=="LD" & spp$SpType=="A"] <- "nontarget"
+spp$Species[spp$Species=="LM" & spp$SpType=="A"] <- "nontarget"
+spp$Species[spp$Species=="NE" & spp$SpType=="A"] <- "nontarget"
+spp$Species[spp$Species=="RG" & spp$SpType=="A"] <- "nontarget"
+spp$Species[spp$Species=="RM" & spp$SpType=="A"] <- "nontarget"
+spp$Species[spp$Species=="SY" & spp$SpType=="A"] <- "nontarget"
+spp$Species[spp$Species=="*" & spp$SpType=="A"] <- "nontarget"
+spp$Species[spp$Species=="SU" & spp$SpType=="A"] <- "nontarget"
 
 n <- unique(spp$Species)
 length(n)
 
 # Remove nontarget species codes
-spp <- filter( spp, Species_Code!="nontarget" )
+spp <- filter( spp, Species!="nontarget" )
 
 # Trim white space around Species code
-spp$Species_Code <- trimws(spp$Species_Code)
+spp$Species <- trimws(spp$Species)
 
 # Create invert observations and save
 invert <- dplyr::filter( spp, SpType=="I")
@@ -205,7 +205,7 @@ algae <- dplyr::filter( spp, SpType=="A")
 write.csv(algae, "./Data/UpdatedObservations/AlgaeObs_updated.csv")
 
 # Add Invert/Algae to species code field
-spp$Spp_cde_type <- paste0(spp$SpType,"_",spp$Species_Code)
+spp$Species_Code <- paste0(spp$SpType,"_",spp$Species)
 
 # Save updated species observations
 write.csv(spp, "./Data/UpdatedObservations/SpeciesObs_updated.csv")

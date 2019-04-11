@@ -56,7 +56,7 @@ UsePackages <- function( pkgs, update=FALSE, locn="http://cran.rstudio.com/" ) {
 trim <- function (x) gsub("^\\s+|\\s+$", "", x)
 
 # Make packages available
-UsePackages( pkgs=c("dplyr","reshape", "vegan") ) 
+UsePackages( pkgs=c("dplyr","reshape", "vegan","data.table") ) 
 
 ###########################
 # Pseudocode
@@ -81,11 +81,12 @@ quads <- read.csv( "./Data/ExtractedData/Quadrat.csv", header=T, sep="," )
 # 2. Build Species X Site table
 ################################
 # Remove extra fields
-sppSite <- dplyr::select( spp, HKey, Spp_cde_type )
+sppSite <- dplyr::select( spp, HKey, Species_Code )
 # Remove duplicate rows
 sppSite <- unique(sppSite)
 # Build species X site matrix
-sppSite <- reshape2::dcast( sppSite, HKey~Spp_cde_type, fun=length, value.var = "Spp_cde_type")
+sppSite <- reshape2::dcast( sppSite, HKey~Species_Code, fun=length, value.var = "Species_Code")
+head(sppSite, 3)
 write.csv( sppSite, "./Data/SpeciesBy_matrices/AllSpeciesBySite.csv" )
 
 ###################################
@@ -94,9 +95,10 @@ write.csv( sppSite, "./Data/SpeciesBy_matrices/AllSpeciesBySite.csv" )
 # Combine HKey & Quadrat number 
 spp$TransQuad <- paste( spp$HKey, spp$Quadrat, sep="_" )
 # Remove extra fields
-sppQuad <- dplyr::select( spp, TransQuad, Spp_cde_type )
+sppQuad <- dplyr::select( spp, TransQuad, Species_Code )
 # Build species X quadrat matrix
-sppQuad <- reshape2::dcast( sppQuad, TransQuad~Spp_cde_type, fun=length, value.var = "Spp_cde_type" )
+sppQuad <- reshape2::dcast( sppQuad, TransQuad~Species_Code, fun=length, value.var = "Species_Code" )
+head(sppQuad, 3)
 write.csv(sppQuad, "./Data/SpeciesBy_matrices/AllSpeciesByQuadrat.csv")
 
 ##########################################
@@ -107,42 +109,38 @@ quadDepth <- dplyr::select( quads, HKey, Quadrat, DepthCat )
 # Join quadDepth with spp
 sppQuadDepth <- inner_join( spp, quadDepth, by=c("HKey","Quadrat") )
 # Remove extra fields
-sppDepth <- dplyr::select( sppQuadDepth, HKey, DepthCat, Spp_cde_type )
+sppDepth <- dplyr::select( sppQuadDepth, HKey, DepthCat, Species_Code )
 # Combine transect and depth category
 sppDepth$TransDepth <- paste( sppDepth$HKey, sppDepth$DepthCat, sep="_" )
 # Remove extra fields
-sppDepth <- dplyr::select( sppDepth, TransDepth, Spp_cde_type )
+sppDepth <- dplyr::select( sppDepth, TransDepth, Species_Code )
 # Remove duplicate rows
 sppDepth <- unique( sppDepth )
 # Build species X depth category matrix
-sppDepth <- reshape2::dcast( sppDepth, TransDepth~Spp_cde_type,  fun=length, value.var = "Spp_cde_type" )
-#sppDepth$TransDepth <- substr(sppDepth$TransDepth, ) # This line throws an error
+sppDepth <- reshape2::dcast( sppDepth, TransDepth~Species_Code,  fun=length, value.var = "Species_Code" )
+head(sppDepth, 3)
 write.csv(sppDepth, "./Data/SpeciesBy_matrices/AllSpeciesByDepthCategory.csv", row.names = FALSE)
 
-#####################################
-# 5. Build Species X Substrate table
-#####################################
+##############################################
+# 5. Build Species X Substrate table - 2 ways
+##############################################
 ## Use only the dominant substrate, up to 3 substrate values can be recorded on the data sheet
 # Select some fields from the quads table
 quadSub <- dplyr::select( quads, HKey, Quadrat, Substrate1 )
 # Join quadSub with spp
 sppQuadSub <- inner_join( spp, quadSub, by=c("HKey","Quadrat") )
 # Build Species X Substrate matrix
-sppSub <- dplyr::select( sppQuadSub, Substrate1, Spp_cde_type )
+sppSub <- dplyr::select( sppQuadSub, Substrate1, Species_Code )
 sppSub$Substrate <- as.factor(sppSub$Substrate1)
 sppSub$Substrate1 <- NULL
 sppSub <- na.omit(sppSub)
-# # Remove extra fields
-# sppSub <- dplyr::select( sppQuadSub, HKey, Substrate1, Spp_cde_type )
-# # Combine transect and substrate category
-# sppSub$TransSub <- paste( sppSub$HKey, sppSub$Substrate1, sep="_" )
-# # Remove extra fields
-# sppSub <- dplyr::select( sppSub, TransSub, Spp_cde_type )
-# # Remove duplicate rows
-# sppSub <- unique( sppSub )
-# Build species X depth category matrix
-sppSub <- reshape2::dcast( sppSub, Spp_cde_type~Substrate,  fun=length, value.var = "Spp_cde_type" )
-
+# Build species X substrate category matrix - substrate in column 1
+subSpp <- reshape2::dcast( sppSub, Substrate~Species_Code, fun=length, value.var = "Species_Code")
+head(subSpp, 3)
+write.csv(subSpp, "./Data/SpeciesBy_matrices/PrimarySubstrateAndAllSpecies.csv")
+# Build species X substrate category matrix - species in column 1
+sppSub <- reshape2::dcast( sppSub, Species_Code~Substrate,  fun=length, value.var = "Species_Code" )
+head(sppSub, 3) ### This one needs to change
 write.csv(sppSub, "./Data/SpeciesBy_matrices/AllSpeciesByPrimarySubstrate.csv")
 
 #############################################
@@ -154,13 +152,17 @@ SubDepth <- dplyr::select( quads, HKey, Quadrat, Substrate1, DepthCat )
 # Join with spp
 sppSubDepth <- inner_join( spp, SubDepth, by=c("HKey","Quadrat") )
 # Remove extra fields
-sppSubDepth <- dplyr::select( sppSubDepth, HKey, DepthCat, Substrate1, Spp_cde_type )
+sppSubDepth <- dplyr::select( sppSubDepth, HKey, DepthCat, Substrate1, Species_Code )
 # Combine transect, depth, and substrate category
-sppSubDepth$trns.dpth.sub <- paste( sppSubDepth$HKey, sppSubDepth$DepthCat, sppSubDepth$Substrate1, sep="_" )
+#sppSubDepth$trns.dpth.sub <- paste( sppSubDepth$HKey, sppSubDepth$DepthCat, sppSubDepth$Substrate1, sep="_" )
+sppSubDepth$trns.dpth.sub <- paste( sppSubDepth$DepthCat, sppSubDepth$Substrate1, sep="_" )
 # Remove extra fields
-sppSubDepth <- dplyr::select( sppSubDepth, trns.dpth.sub, Spp_cde_type )
+sppSubDepth <- dplyr::select( sppSubDepth, trns.dpth.sub, Species_Code )
 # Remove duplicate rows
 sppSubDepth <- unique( sppSubDepth )
 # Build species X Depth and Substrate matrix
-sppSubDepth <- reshape2::dcast( sppSubDepth, trns.dpth.sub~Spp_cde_type, fun=length, value.var = "Spp_cde_type" )
+sppSubDepth <- reshape2::dcast( sppSubDepth, trns.dpth.sub~Species_Code, fun=length, value.var = "Species_Code" )
+head(sppSubDepth, 3)
 write.csv( sppSubDepth, "./Data/SpeciesBy_matrices/AllSpeciesByDepthAndSubstrate.csv")
+
+

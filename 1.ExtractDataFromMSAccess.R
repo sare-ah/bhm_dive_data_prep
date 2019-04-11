@@ -93,6 +93,15 @@ spec$SpType[spec$SpecCode=="LH"]<-"I"
 spec$SpType[spec$SpecCode=="RSC"]<-"I"
 spec$SpType[spec$SpecCode=="PN"]<-"I"
 
+# Do some corrections for survey names
+headers$Survey <- as.character(headers$Survey)
+headers$Survey[headers$Survey=="Habitat Mapping 2017 - Indian Arm"]<-"PAC 2017-045"
+headers$Survey[headers$Survey=="Habitat Mapping 2017 - English Bay"]<-"PAC 2017-045"
+headers$Survey[headers$Survey=="Habitat Mapping 2017 - Gulf Islands"]<-"PAC 2017-045"
+headers$Survey[headers$Survey=="Habitat Mapping 2017 - Vancouver Harbour"]<-"PAC 2017-045"
+headers$Survey[headers$Survey=="Habitat Mapping 2017 - Juan de Fuca"]<-"PAC 2017-045"
+headers$Survey <- as.factor(headers$Survey)
+
 # Write out tables for MS Access db so that you don't have to import them again!
 write.csv(headers, "./Data/ExtractedData/Headers.csv")
 write.csv(spec, "./Data/ExtractedData/SpeciesObs.csv")

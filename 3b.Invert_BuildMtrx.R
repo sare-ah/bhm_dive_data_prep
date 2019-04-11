@@ -80,11 +80,11 @@ quads <- read.csv( "./Data/ExtractedData/Quadrat.csv", header=T, sep="," )
 # 2. Build Species X Site table
 ################################
 # Remove extra fields
-sppSite <- dplyr::select( spp, HKey, Species_Code )
+sppSite <- dplyr::select( spp, HKey, Species )
 # Remove duplicate rows
 sppSite <- unique(sppSite)
 # Build species X site matrix
-sppSite <- reshape2::dcast( sppSite, HKey~Species_Code, fun=length, value.var = "Species_Code")
+sppSite <- reshape2::dcast( sppSite, HKey~Species, fun=length, value.var = "Species")
 write.csv( sppSite, "./Data/SpeciesBy_matrices/InvertsBySite.csv" )
 
 ###################################
@@ -93,9 +93,9 @@ write.csv( sppSite, "./Data/SpeciesBy_matrices/InvertsBySite.csv" )
 # Combine HKey & Quadrat number 
 spp$TransQuad <- paste( spp$HKey, spp$Quadrat, sep="_" )
 # Remove extra fields
-sppQuad <- dplyr::select( spp, TransQuad, Species_Code )
+sppQuad <- dplyr::select( spp, TransQuad, Species )
 # Build species X quadrat matrix
-sppQuad <- reshape2::dcast( sppQuad, TransQuad~Species_Code, fun=length, value.var = "Species_Code" )
+sppQuad <- reshape2::dcast( sppQuad, TransQuad~Species, fun=length, value.var = "Species" )
 write.csv(sppQuad, "./Data/SpeciesBy_matrices/InvertsByQuadrat.csv")
 
 ##########################################
@@ -106,15 +106,15 @@ quadDepth <- dplyr::select( quads, HKey, Quadrat, DepthCat )
 # Join quadDepth with spp
 sppQuadDepth <- inner_join( spp, quadDepth, by=c("HKey","Quadrat") )
 # Remove extra fields
-sppDepth <- dplyr::select( sppQuadDepth, HKey, DepthCat, Species_Code )
+sppDepth <- dplyr::select( sppQuadDepth, HKey, DepthCat, Species )
 # Combine transect and depth category
 sppDepth$TransDepth <- paste( sppDepth$HKey, sppDepth$DepthCat, sep="_" )
 # Remove extra fields
-sppDepth <- dplyr::select( sppDepth, TransDepth, Species_Code )
+sppDepth <- dplyr::select( sppDepth, TransDepth, Species )
 # Remove duplicate rows
 sppDepth <- unique( sppDepth )
 # Build species X depth category matrix
-sppDepth <- reshape2::dcast( sppDepth, TransDepth~Species_Code,  fun=length, value.var = "Species_Code" )
+sppDepth <- reshape2::dcast( sppDepth, TransDepth~Species,  fun=length, value.var = "Species" )
 #sppDepth$TransDepth <- substr(sppDepth$TransDepth, ) # This line throws an error
 write.csv(sppDepth, "./Data/SpeciesBy_matrices/InvertsByDepthCategory.csv", row.names = FALSE)
 
@@ -127,20 +127,20 @@ quadSub <- dplyr::select( quads, HKey, Quadrat, Substrate1 )
 # Join quadSub with spp
 sppQuadSub <- inner_join( spp, quadSub, by=c("HKey","Quadrat") )
 # Build Species X Substrate matrix
-sppSub <- dplyr::select( sppQuadSub, Substrate1, Species_Code )
+sppSub <- dplyr::select( sppQuadSub, Substrate1, Species )
 sppSub$Substrate <- as.factor(sppSub$Substrate1)
 sppSub$Substrate1 <- NULL
 sppSub <- na.omit(sppSub)
 # # Remove extra fields
-# sppSub <- dplyr::select( sppQuadSub, HKey, Substrate1, Species_Code )
+# sppSub <- dplyr::select( sppQuadSub, HKey, Substrate1, Species )
 # # Combine transect and substrate category
 # sppSub$TransSub <- paste( sppSub$HKey, sppSub$Substrate1, sep="_" )
 # # Remove extra fields
-# sppSub <- dplyr::select( sppSub, TransSub, Species_Code )
+# sppSub <- dplyr::select( sppSub, TransSub, Species )
 # # Remove duplicate rows
 # sppSub <- unique( sppSub )
 # Build species X depth category matrix
-sppSub <- reshape2::dcast( sppSub, Species_Code~Substrate,  fun=length, value.var = "Species_Code" )
+sppSub <- reshape2::dcast( sppSub, Species~Substrate,  fun=length, value.var = "Species" )
 
 write.csv(sppSub, "./Data/SpeciesBy_matrices/InvertsByPrimarySubstrate.csv")
 
@@ -153,13 +153,13 @@ SubDepth <- dplyr::select( quads, HKey, Quadrat, Substrate1, DepthCat )
 # Join with spp
 sppSubDepth <- inner_join( spp, SubDepth, by=c("HKey","Quadrat") )
 # Remove extra fields
-sppSubDepth <- dplyr::select( sppSubDepth, HKey, DepthCat, Substrate1, Species_Code )
+sppSubDepth <- dplyr::select( sppSubDepth, HKey, DepthCat, Substrate1, Species )
 # Combine transect, depth, and substrate category
 sppSubDepth$newKey <- paste( sppSubDepth$HKey, sppSubDepth$DepthCat, sppSubDepth$Substrate1, sep="_" )
 # Remove extra fields
-sppSubDepth <- dplyr::select( sppSubDepth, newKey, Species_Code )
+sppSubDepth <- dplyr::select( sppSubDepth, newKey, Species )
 # Remove duplicate rows
 sppSubDepth <- unique( sppSubDepth )
 # Build species X Depth and Substrate matrix
-sppSubDepth <- reshape2::dcast( sppSubDepth, newKey~Species_Code, fun=length, value.var = "Species_Code" )
+sppSubDepth <- reshape2::dcast( sppSubDepth, newKey~Species, fun=length, value.var = "Species" )
 write.csv( sppSubDepth, "./Data/SpeciesBy_matrices/InvertsByDepthAndSubstrate.csv")
