@@ -23,7 +23,7 @@ Sys.getenv("R_ARCH")
 # Then you will have to open and close R for the changes to take effect
 
 # Set working directory
-setwd("F:/R/MY_PROJECTS/DiveSurveys_DataPrep")
+setwd("C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep")
 
 
 ################ Functions #####################################
@@ -44,13 +44,11 @@ UsePackages <- function( pkgs, update=FALSE, locn="http://cran.rstudio.com/" ) {
   if( update ) update.packages( ask=FALSE )
 }  # End UsePackages function
 
-
 # Remove rows with NA values in specific columns within a dataframe
 completeFun <- function(data, desiredCols) {
   completeVec <- complete.cases(data[, desiredCols])
   return(data[completeVec, ])
 }
-
 
 # Make packages available
 UsePackages( pkgs=c("dplyr","reshape", "vegan", "stringr","rgdal","sp","geoR") ) 
