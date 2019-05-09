@@ -24,7 +24,7 @@ Sys.getenv("R_ARCH")
 # Then you will have to open and close R for the changes to take effect
 
 # Set working directory
-setwd("F:/R/MY_PROJECTS/DiveSurveys_DataPrep")
+setwd("C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep")
 
 ################ Functions #####################################
 ################################################################
@@ -58,7 +58,8 @@ UsePackages( pkgs=c("dplyr","tidyr", "plyr","reshape","reshape2") )
 ### 1. Read input data ###
 ##########################
 # Read in tables that were extracted from the MS Access db using the script ExtractDataFromMSAccess.R
-quad <- read.csv( "./Data/ExtractedData/Quadrat.csv", header=T, sep="," )
+myFile <- file.choose() # "./Data/ExtractedData/Quadrat.csv", header=T, sep="," )
+quad <- read.csv(myFile, header=T, sep=",")
 quad <- dplyr::select(quad, HKey, Quadrat, CorDepthM, DepthCat, Substrate1, Sub1Pct, Substrate2, Sub2Pct, Substrate3, Sub3Pct )
 
 ### 2. Calculate mean depth & slope for each quadrat ###
