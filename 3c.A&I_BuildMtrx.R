@@ -135,11 +135,11 @@ sppSub <- na.omit(sppSub)
 # Build species X substrate category matrix - substrate in column 1
 subSpp <- reshape2::dcast( sppSub, Substrate~Species_Code, fun=length, value.var = "Species_Code")
 head(subSpp, 3)
-write.csv(subSpp, "./Data/SpeciesBy_matrices/PrimarySubstrateAndAllSpecies.csv")
+write.csv(subSpp, "./Data/SpeciesBy_matrices/PrimarySubstrateAndAllSpecies.csv", row.names = F)
 # Build species X substrate category matrix - species in column 1
 sppSub <- reshape2::dcast( sppSub, Species_Code~Substrate,  fun=length, value.var = "Species_Code" )
 head(sppSub, 3) ### This one needs to change
-write.csv(sppSub, "./Data/SpeciesBy_matrices/AllSpeciesByPrimarySubstrate.csv")
+write.csv(sppSub, "./Data/SpeciesBy_matrices/AllSpeciesByPrimarySubstrate.csv", row.names = F)
 
 #############################################
 # 6. Build Species X Substrate & Depth table
@@ -161,6 +161,6 @@ sppSubDepth <- unique( sppSubDepth )
 # Build species X Depth and Substrate matrix
 sppSubDepth <- reshape2::dcast( sppSubDepth, trns.dpth.sub~Species_Code, fun=length, value.var = "Species_Code" )
 head(sppSubDepth, 3)
-write.csv( sppSubDepth, "./Data/SpeciesBy_matrices/AllSpeciesByDepthAndSubstrate.csv")
+write.csv( sppSubDepth, "./Data/SpeciesBy_matrices/AllSpeciesByDepthAndSubstrate.csv", row.names = F)
 
 

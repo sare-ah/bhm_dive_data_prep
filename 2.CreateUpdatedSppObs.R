@@ -198,15 +198,15 @@ spp$Species <- trimws(spp$Species)
 
 # Create invert observations and save
 invert <- dplyr::filter( spp, SpType=="I")
-write.csv(invert, "./Data/UpdatedObservations/InvertObs_updated.csv")
+write.csv(invert, "./Data/UpdatedObservations/InvertObs_updated.csv", row.names = F)
 
 # Create invert observations and save
 algae <- dplyr::filter( spp, SpType=="A")
-write.csv(algae, "./Data/UpdatedObservations/AlgaeObs_updated.csv")
+write.csv(algae, "./Data/UpdatedObservations/AlgaeObs_updated.csv", row.names = F)
 
 # Add Invert/Algae to species code field
 spp$Species_Code <- paste0(spp$SpType,"_",spp$Species)
 
 # Save updated species observations
-write.csv(spp, "./Data/UpdatedObservations/SpeciesObs_updated.csv")
+write.csv(spp, "./Data/UpdatedObservations/SpeciesObs_updated.csv", row.names = F)
 cat("Created updated Invert, Alage, Species observations files")

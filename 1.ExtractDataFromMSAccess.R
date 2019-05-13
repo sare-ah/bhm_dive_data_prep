@@ -103,9 +103,9 @@ headers$Survey[headers$Survey=="Habitat Mapping 2017 - Juan de Fuca"]<-"PAC 2017
 headers$Survey <- as.factor(headers$Survey)
 
 # Write out tables for MS Access db so that you don't have to import them again!
-write.csv(headers, "./Data/ExtractedData/Headers.csv")
-write.csv(spec, "./Data/ExtractedData/SpeciesObs.csv")
-write.csv(quadrat, "./Data/ExtractedData/Quadrat.csv")
-write.csv(dropCam, "./Data/ExtractedData/DropCam.csv")
+write.csv(headers, "./Data/ExtractedData/Headers.csv", row.names = F)
+write.csv(spec, "./Data/ExtractedData/SpeciesObs.csv", row.names = F)
+write.csv(quadrat, "./Data/ExtractedData/Quadrat.csv", row.names = F)
+write.csv(dropCam, "./Data/ExtractedData/DropCam.csv", row.names = F)
 
 
