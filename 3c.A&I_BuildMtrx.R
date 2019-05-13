@@ -21,16 +21,10 @@
 ######################################################################################################################
 
 #### Start up tasks ####
-# start fresh
 rm(list=ls())
 
 # Check which version of R is being used and reset if necessary
 Sys.getenv("R_ARCH")   
-# The message returned will tell you which version of R is being used
-# "/i386" 32 bit R --- which is necessary to grab data from MS Access database
-# "/64"   64 bit R
-# To reset: Select Tools menu | Global Options... | R Version: | Change
-# Then you will have to open and close R for the changes to take effect
 
 # Set working directory
 setwd("C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep")
@@ -93,13 +87,17 @@ write.csv( sppSite, "./Data/SpeciesBy_matrices/AllSpeciesBySite.csv" )
 # 3. Build Species X Quadrat table
 ###################################
 # Combine HKey & Quadrat number 
-spp$TransQuad <- paste( spp$HKey, spp$Quadrat, sep="_" )
+spp$HKeyQuad <- paste( spp$HKey, spp$Quadrat, sep="_" )
 # Remove extra fields
-sppQuad <- dplyr::select( spp, TransQuad, Species_Code )
+sppQuad <- dplyr::select( spp, HKey, HKeyQuad, Species_Code )
 # Build species X quadrat matrix
-sppQuad <- reshape2::dcast( sppQuad, TransQuad~Species_Code, fun=length, value.var = "Species_Code" )
+sppQuad <- reshape2::dcast( sppQuad, HKey+HKeyQuad~Species_Code, fun=length, value.var = "Species_Code" )
 head(sppQuad, 3)
-write.csv(sppQuad, "./Data/SpeciesBy_matrices/AllSpeciesByQuadrat.csv")
+# Add lat/lon data
+hdrs <- dplyr::select(hdrs,HKey,LatDegStart,LatMinStart,LonDegStart,LonMinStart,LatDegEnd,LatMinEnd,LonDegEnd,LonMinEnd)
+# Join to new species matrix
+dat <- dplyr::left_join(hdrs, sppQuad, by="HKey")
+write.csv(dat, "./Data/SpeciesBy_matrices/AllSpeciesByQuadrat.csv", row.names = F)
 
 ##########################################
 # 4. Build Species X Depth category table
