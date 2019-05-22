@@ -155,10 +155,16 @@ head(shp@data,3)
 all.env.shp <- merge(shp, df.ID, by = "ID")
 head(all.env.shp@data,3)
 
-# Save as a csv & shp
-write.csv(all.env.shp@data,"bhm4analysis.csv",row.names = F)
+# Save as a shp
 dsn <- "C:/Users/daviessa/Documents/CURRENT PROJECTS/Community Assemblages/Data/Final"
 layer <- "REAL_final_bhm"
 writeOGR(all.env.shp,dsn=dsn,layer=layer, driver="ESRI Shapefile", overwrite=T)
+filename <- paste0(dsn,"/bhm4analysis.csv")
+
+# Add coordinate columns and save as a csv
+coords <- all.env.shp@coords
+df.final <- cbind(all.env.shp@data,coords)
+head(df.final,3)
+write.csv(df.final,filename,row.names = F)
 
 cat("Fini!")
