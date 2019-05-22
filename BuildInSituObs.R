@@ -17,11 +17,6 @@ rm(list=ls())
 
 # Check which version of R is being used and reset if necessary
 Sys.getenv("R_ARCH")   
-# The message returned will tell you which version of R is being used
-# "/i386" 32 bit R --- which is necessary to grab data from MS Access database
-# "/64"   64 bit R
-# To reset: Select Tools menu | Global Options... | R Version: | Change
-# Then you will have to open and close R for the changes to take effect
 
 # Set working directory
 setwd("C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep")
@@ -45,7 +40,7 @@ UsePackages <- function( pkgs, update=FALSE, locn="http://cran.rstudio.com/" ) {
 }  # End UsePackages function
 
 # Make packages available
-UsePackages( pkgs=c("dplyr","tidyr", "plyr","reshape","reshape2") ) 
+UsePackages( pkgs=c("dplyr","tidyr", "plyr","reshape","reshape2","rgdal") ) 
 
 ##############
 # Pseudocode
@@ -58,7 +53,8 @@ UsePackages( pkgs=c("dplyr","tidyr", "plyr","reshape","reshape2") )
 ### 1. Read input data ###
 ##########################
 # Read in tables that were extracted from the MS Access db using the script ExtractDataFromMSAccess.R
-myFile <- file.choose() # "./Data/ExtractedData/Quadrat.csv", header=T, sep="," )
+cat("Select extracted quadrat file")
+myFile <- choose.files(caption = "Select extracted quadrat file") # "./Data/ExtractedData/Quadrat.csv", header=T, sep="," )
 quad <- read.csv(myFile, header=T, sep=",")
 quad <- dplyr::select(quad, HKey, Quadrat, CorDepthM, DepthCat, Substrate1, Sub1Pct, Substrate2, Sub2Pct, Substrate3, Sub3Pct )
 
@@ -71,14 +67,14 @@ depth$StartDepth <- ifelse( depth$Quadrat==0, depth$CorDepthM,lag(depth$CorDepth
 depth$EndDepth <- depth$CorDepthM
 
 # Calculate mean depth for each quadrat
-depth$MeanDepth.m <- (depth$StartDepth+depth$EndDepth)/2
+depth$Depth.m <- (depth$StartDepth+depth$EndDepth)/2
 
 # Calculate slope for each quadrat using the arc-tangent
 depth$Elev.Diff <- depth$StartDepth-depth$EndDepth
 depth$Slope <- atan2(depth$Elev.Diff,5) 
 
 # Remove unnecessary columns
-depth <- dplyr::select(depth, HKey, Quadrat, MeanDepth.m, Slope)
+depth <- dplyr::select(depth, HKey, Quadrat, Depth.m, Slope)
 
 # Remove quadrat 0 
 depth <- filter(depth, Quadrat!=0)
@@ -113,19 +109,56 @@ all.sub <- bind_rows(primary,secondary,tertiary)
 # Recode to substrate types
 all.sub$Substrate <- as.factor(all.sub$Substrate)
 all.sub$Substrate <- revalue(all.sub$Substrate,
-                                c("0"="Wood/Bark","1"="Bedrock, smooth","2"="Bedrock with crevices","3"="Boulders",
-                                  "4"="Cobble","5"="Gravel","6"="Pea Gravel","7"="Sand","9"="Mud",
-                                  "10"="Crushed Shell","11"="Whole/Chunk Shell"))
+                                c("0"="Wd.Bark","1"="Bdrk.smth","2"="Bdrk.crv","3"="Boulders",
+                                  "4"="Cobble","5"="Gravel","6"="Pea.Gravel","7"="Sand","9"="Mud",
+                                  "10"="Crsh.Shell","11"="Chnk.Shell"))
 # Remove empty records (locations with only primary or secondary substrates recorded)
 all.sub <- na.omit(all.sub)
 # Cast to a wide table with one column for each possible substrate code
 sub.cast <- dcast(all.sub, HKey + Quadrat ~ Substrate, fun.aggregate = sum, value.var = "SubPct" )
 
-### 4. Build new table of insitu observations ###
-#################################################
-final <- dplyr::full_join(depth, sub.cast, by=c("HKey", "Quadrat"))
+### 4. Build new table with all insitu observations ###
+#######################################################
+sub.quad <- dplyr::full_join(depth, sub.cast, by=c("HKey", "Quadrat"))
 
 # Save in situ observations
-write.csv(final, "./Data/ExtractedData/InSituObs.csv")
-write.csv(depth, "./Data/ExtractedData/Calc.Depth.Slope.csv")
+write.csv(sub.quad, "./Data/ExtractedData/InSituObs.csv",row.names = F)
 
+### 5. Summarise calculations for site X species matrix ###
+###########################################################
+cat("Select crosswalk file between quadrats and sites")
+myFile <- choose.files(caption = "Select crosswalk file between quadrats and sites") # "./Data/ExtractedData/Quadrat.csv", header=T, sep="," )
+keys <- read.csv(myFile, header=T, sep=",")
+
+# Join crosswalk to sub by quadrat, remove HKey and Quadrat fields
+df <- dplyr::left_join(keys, sub.quad, by=c("HKey", "Quadrat"))
+summary(df)
+df[is.na(df)] <- 0
+df <- df[,-c(1:3)]
+
+# Summarise by spatial ID
+df.ID <- as.data.frame(df %>% 
+                         group_by(ID) %>% 
+                         summarise_each(list(mean)) %>%
+                         mutate_at(vars(-ID,-Slope),funs(round(.,0))))
+head(df.ID,3)
+
+### 6. Join to shapefile ###
+############################
+# Load the data
+shppath <- file.path("C:/Users/daviessa/Documents/CURRENT PROJECTS/Community Assemblages/Data/Final")
+# shpname <- list.files(path = shppath, pattern = ".shp$")
+# shpname <- sub(".shp","",shpname)
+shpname <- "final_bhm"
+shp <- readOGR( dsn=shppath, layer=shpname )
+head(shp@data,3)
+all.env.shp <- merge(shp, df.ID, by = "ID")
+head(all.env.shp@data,3)
+
+# Save as a csv & shp
+write.csv(all.env.shp@data,"bhm4analysis.csv",row.names = F)
+dsn <- "C:/Users/daviessa/Documents/CURRENT PROJECTS/Community Assemblages/Data/Final"
+layer <- "REAL_final_bhm"
+writeOGR(all.env.shp,dsn=dsn,layer=layer, driver="ESRI Shapefile", overwrite=T)
+
+cat("Fini!")
