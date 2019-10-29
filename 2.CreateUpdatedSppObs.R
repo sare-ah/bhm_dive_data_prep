@@ -58,6 +58,8 @@ UsePackages( pkgs=c("dplyr","reshape") )
 # 3. Recode algae species codes
 # 4. Divide dataframe into I & A and save updated tables
 
+cat("Create updated species observations...","\n")
+
 #####################
 # 1. Read input data 
 #####################
@@ -69,10 +71,17 @@ spp$Species <- as.character(spp$Species)
 spp$SpType <- toupper(spp$SpType) # capitalize
 spp$Species[spp$Species=="C L"] <- "CL" # correct a typo
 
-# # Change column name
-# names(spp)[names(spp) == 'Species'] <- 'Species'
-# # algae <- dplyr::filter( spp, SpType=="A" )
-# # spp <- dplyr::filter( spp, SpType=="I" )
+# Edits to account to data entry errors for PAC2018-105
+df <- dplyr::filter( spp, SpType=="O" ) # grab incorrect records
+spp <- dplyr::filter( spp, SpType!="O" ) # remove from spp recordset
+lut <- read.csv( "./Data/LookupTbls/SpeciesLookUpTbl.csv", header=T, sep=",", stringsAsFactors = F)
+lut <- dplyr::filter(lut, DupCode=='N') # only use codes that identify either algae OR invert
+lut <- dplyr::select(lut, SpType, Species)
+df$SpType <- NULL
+df <- left_join(df, lut, by="Species") # write new SpType codes
+df <- df[complete.cases(df),] # remove NA's
+spp <- rbind(spp, df)
+
 
 n <- unique(spp$Species)
 #length(n)

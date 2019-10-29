@@ -24,7 +24,7 @@ Sys.getenv("R_ARCH")
 # Then you will have to open and close R for the changes to take effect
 
 # Set working directory
-setwd("F:/R/MY_PROJECTS/DiveSurveys_DataPrep")
+setwd("C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep")
 
 ################ Functions #####################################
 ################################################################
@@ -60,7 +60,7 @@ UsePackages( pkgs=c("dplyr","reshape") )
 quad <- read.csv( "./Data/ExtractedData/Quadrat.csv", header=T, sep="," )
 
 # remove algae percentages
-quad <- dplyr::select(quad, 2:13)
+quad <- dplyr::select(quad, 1:12)
 
 ################################################################
 # 2. Calculate the substrate that represents >50% for each quad
@@ -75,4 +75,5 @@ sub.cat <- read.csv( "./Data/LookupTbls/SubstrateCategories.csv", header=T, sep=
 quad.sub <- dplyr::left_join(quad, sub.cat, by=c("Substrate1", "Substrate2"))
 
 # Save updated quadrat table
-write.csv(quad.sub, "./Data/UpdatedObservations/Quadrat_updated.csv")
+write.csv(quad.sub, "./Data/UpdatedObservations/Quadrat_RMSM.csv", row.names = F)
+

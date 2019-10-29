@@ -52,6 +52,7 @@ trim <- function (x) gsub("^\\s+|\\s+$", "", x)
 # Make packages available
 UsePackages( pkgs=c("dplyr","reshape", "vegan","data.table") ) 
 
+cat("Create species matrices...","\n")
 ###########################
 # Pseudocode
 ###########################
@@ -93,11 +94,11 @@ sppQuad <- dplyr::select( spp, HKey, HKeyQuad, Species_Code )
 # Build species X quadrat matrix
 sppQuad <- reshape2::dcast( sppQuad, HKey+HKeyQuad~Species_Code, fun=length, value.var = "Species_Code" )
 head(sppQuad, 3)
-# Add lat/lon data
-hdrs <- dplyr::select(hdrs,HKey,LatDegStart,LatMinStart,LonDegStart,LonMinStart,LatDegEnd,LatMinEnd,LonDegEnd,LonMinEnd)
-# Join to new species matrix
-dat <- dplyr::left_join(hdrs, sppQuad, by="HKey")
-write.csv(dat, "./Data/SpeciesBy_matrices/AllSpeciesByQuadrat.csv", row.names = F)
+# # Add lat/lon data
+# hdrs <- dplyr::select(hdrs,HKey,LatDegStart,LatMinStart,LonDegStart,LonMinStart,LatDegEnd,LatMinEnd,LonDegEnd,LonMinEnd)
+# # Join to new species matrix
+# dat <- dplyr::left_join(hdrs, sppQuad, by="HKey")
+write.csv(sppQuad, "./Data/SpeciesBy_matrices/AllSpeciesByQuadrat.csv", row.names = F)
 
 ##########################################
 # 4. Build Species X Depth category table
