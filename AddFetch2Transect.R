@@ -9,6 +9,9 @@
 # Date:       October 29, 2019
 ######################################################################################################################
  
+# TO DO:
+# Add some code to export all final records with distance to nearest fetch point greater than 100 m and plot
+
 # Start fresh
 rm(list=ls())
 
@@ -29,7 +32,6 @@ cat("Adding Fetch values to transect start position...","\n")
 # Read in transects and fetch spatial file
 #=========================================
 df <- read.csv('./Data/UpdatedObservations/Transect.coords.csv') # WGS
-df <- dplyr::filter(df, HKey!=1425)
 fetch <- readOGR(dsn = "F:/GIS/Fetch", layer = "Fetch_AllRegions") # NAD 83
 proj4string(fetch)
 

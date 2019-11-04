@@ -19,10 +19,9 @@ if(!require(data.table)) install.packages("data.table")
 
 setwd("C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep")
 
-#outdir<-"forClusterAnalysis_"
-
 #Set up parameters
-spThreshold <- 0.03  #proportion of sites that a species must be found in, to be included in the analysis. e.g., 0.02 is 2% of sites.
+spThreshold <- 0.03  # proportion of sites that a species must be found in, to be included in the analysis. e.g., 0.02 is 2% of sites.
+spCount <- 3 # Remove sites with 3 or less species
 
 ##############
 #Import data 
@@ -47,7 +46,7 @@ ncol(remRare) # We have 110 species
 
 # Remove sites that only have one or two species because these sites throw off cluster analysis)
 sitesums <- data.frame(site=rownames(remRare), count=rowSums(remRare))
-barren <- subset(sitesums, count<=3) # Remove sites with 3 or less species
+barren <- subset(sitesums, count<=spCount) 
 
 forCl <- remRare[!(rownames(remRare) %in% barren$site),]
 
