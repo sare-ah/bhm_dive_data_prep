@@ -105,18 +105,21 @@ write.csv(sppQuad, "./Data/SpeciesBy_matrices/AllSpeciesByQuadrat.csv", row.name
 ##########################################
 # Remove some field from the quads table
 quadDepth <- dplyr::select( quads, HKey, Quadrat, DepthCat )
-# Join quadDepth with spp
-sppQuadDepth <- inner_join( spp, quadDepth, by=c("HKey","Quadrat") )
-# Remove extra fields
-sppDepth <- dplyr::select( sppQuadDepth, HKey, DepthCat, Species_Code )
 # Combine transect and depth category
-sppDepth$TransDepth <- paste( sppDepth$HKey, sppDepth$DepthCat, sep="_" )
+quadDepth$TransDepth <- paste(quadDepth$HKey, quadDepth$DepthCat, sep="_")
+# Join quadDepth with spp
+sppQuadDepth <- right_join( spp, quadDepth, by=c("HKey","Quadrat") )
+# Remove extra fields
+sppDepth <- dplyr::select( sppQuadDepth, HKey, DepthCat, TransDepth, Species_Code )
 # Remove extra fields
 sppDepth <- dplyr::select( sppDepth, TransDepth, Species_Code )
 # Remove duplicate rows
 sppDepth <- unique( sppDepth )
+sppDepth$Species_Code <- as.character(sppDepth$Species_Code)
+sppDepth$Species_Code <- sppDepth$Species_Code %>% replace_na("noObs")
 # Build species X depth category matrix
 sppDepth <- reshape2::dcast( sppDepth, TransDepth~Species_Code,  fun=length, value.var = "Species_Code" )
+sppDepth <- dplyr::select(sppDepth, -noObs)
 head(sppDepth, 3)
 write.csv(sppDepth, "./Data/SpeciesBy_matrices/AllSpeciesByDepthCategory.csv", row.names = FALSE)
 

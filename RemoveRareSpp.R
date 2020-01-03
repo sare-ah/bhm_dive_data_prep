@@ -47,6 +47,7 @@ ncol(remRare) # We have 110 species
 # Remove sites that only have one or two species because these sites throw off cluster analysis)
 sitesums <- data.frame(site=rownames(remRare), count=rowSums(remRare))
 barren <- subset(sitesums, count<=spCount) 
+tail(barren)
 
 forCl <- remRare[!(rownames(remRare) %in% barren$site),]
 

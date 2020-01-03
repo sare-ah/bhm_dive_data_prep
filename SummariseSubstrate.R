@@ -51,11 +51,12 @@ cat("Select extracted quadrat file","\n")
 # myFile <- choose.files(caption = "Select updated quadrat file with RMSM fields") # "./Data/ExtractedData/Quadrat_RMSM.csv", header=T, sep="," )
 # quad <- read.csv(myFile, header=T, sep=",")
 
-quad <- read.csv( "./Data/ExtractedData/Quadrat.csv", header=T, sep="," )
+#quad <- read.csv( "./Data/ExtractedData/Quadrat.csv", header=T, sep="," )
+quad <- read.csv( "./Data/UpdatedObservations/Quadrat_RMSM.csv", header=T, sep="," )
 
 ### 2. Calculate mean depth & slope for each depth category ###
 ###############################################################
-depth <- dplyr::select(quad, HKey, Quadrat, CorDepthM, DepthCat)
+depth <- dplyr::select(quad, HKey, Quadrat, CorDepthM, DepthCat, RMSM.cat)
 
 # Set start depth as the recorded depth from the previous quadrat, unless the quadrat is number 0
 depth$StartDepth <- ifelse( depth$Quadrat==0, depth$CorDepthM,lag(depth$CorDepthM, n=1)  )
@@ -64,14 +65,22 @@ depth$EndDepth <- depth$CorDepthM
 # Calculate the change in elevation for each quadrat using the arc-tangent
 depth$qElev.Diff <- abs(depth$StartDepth-depth$EndDepth)
 depth <- dplyr::filter(depth, Quadrat!=0)
-depth <- dplyr::select(depth, HKey, DepthCat, CorDepthM, qElev.Diff)
+depth <- dplyr::select(depth, HKey, DepthCat, CorDepthM, qElev.Diff, RMSM.cat)
 
 # Summarise depth and elevation change for each transect/Depth category combination
 df <- as.data.frame(depth %>%
           group_by(HKey, DepthCat) %>%
-          dplyr::select(HKey, DepthCat,CorDepthM,qElev.Diff) %>%
+          dplyr::select(HKey, DepthCat,CorDepthM,qElev.Diff,RMSM.cat) %>%
           dplyr::summarise(Depth = mean(CorDepthM),
-                    dElev.Diff = mean(qElev.Diff)))
+                    dElev.Diff = mean(qElev.Diff),
+                    substrt = median(RMSM.cat)))
+
+
+# Recode some of the substrate categories *** TO DO: Check if recoding is logical ***
+df$substrt[df$substrt==1.5] <- 2 # Rock + mixed = mixed
+df$substrt[df$substrt==2.5] <- 2 # Mixed + sand = mixed
+df$substrt[df$substrt==3.5] <- 4 # Sand + mud = mud
+
 
 # What to do with records with slope greater than 1.0 or less than -1.0??? There are 5 cases in the dataset.
 # Set slope to either 1.0 or -1.0 to correct for typo or instances where the swell exacerbated the difference 
@@ -81,76 +90,94 @@ df$dElev.Diff[depth$dElev.Diff > 1.0] <- 1.0
 df$dElev.Diff[depth$dElev.Diff < -1.0] <- -1.0
 
 df <- round(df, digits=2)
-df[1:2] <- sapply(df[1:2],as.character)
+#df[1:2] <- sapply(df[1:2],as.character)
 
 cat("Calculating mean depth...","\n")
 
 # Save depth category elevation and slope summaries
 write.csv(df, "./Data/UpdatedObservations/DepthCat_summaries.csv", row.names = F)
 
-### 3. Summarise substrate for each quadrat ###
-###############################################
-substrt <- dplyr::select(quad, HKey, Quadrat, DepthCat, Substrate1, Sub1Pct, Substrate2, Sub2Pct, Substrate3, Sub3Pct)
-substrt$HKey <- as.character(substrt$HKey)
-substrt$DepthCat <- as.character(substrt$DepthCat)
-
-# Remove quadrat 0 b/c it has no substrate records
-substrt <- filter(substrt, Quadrat!=0)
-
-# Separate data for each substrate field
-primary <- dplyr::select(substrt, HKey, Quadrat, DepthCat, Substrate1, Sub1Pct)
-names(primary)[names(primary)=="Substrate1"] <- "Substrate"
-names(primary)[names(primary)=="Sub1Pct"] <- "SubPct"
-secondary <- dplyr::select(substrt, HKey, Quadrat, DepthCat, Substrate2, Sub2Pct)
-names(secondary)[names(secondary)=="Substrate2"] <- "Substrate"
-names(secondary)[names(secondary)=="Sub2Pct"] <- "SubPct"
-tertiary <- dplyr::select(substrt, HKey, Quadrat, DepthCat, Substrate3, Sub3Pct)
-names(tertiary)[names(tertiary)=="Substrate3"] <- "Substrate"
-names(tertiary)[names(tertiary)=="Sub3Pct"] <- "SubPct"
-
-# Combine rows into one long and narrow table
-sub.123 <- bind_rows(primary,secondary,tertiary)
-# Recode to substrate types
-sub.123$Substrate <- as.factor(sub.123$Substrate)
-sub.123$Substrate <- plyr::revalue(sub.123$Substrate,
-                                c("0"="Wd.Bark","1"="Bdrk.smth","2"="Bdrk.crv","3"="Boulders",
-                                  "4"="Cobble","5"="Gravel","6"="Pea.Gravel","7"="Sand","9"="Mud",
-                                  "10"="Crsh.Shell","11"="Chnk.Shell"))
-
-# Remove empty records (locations with only primary or secondary substrates recorded)
-sub.123 <- filter(sub.123, SubPct!='0')
-sub.123 <- sub.123[complete.cases(sub.123[ , 4]),]
-
-mydf <- data.table(sub.123)
-head(mydf)
-
-# Spread data to a wide table with one column for each possible substrate code
-#sub.cast <- reshape2::dcast(sub.123, HKey + DepthCat + Quadrat ~ Substrate, fun.aggregate = sum, value.var = "SubPct" ) # reshape2 has been retired! 
-mydf <- dcast(mydf, HKey + DepthCat ~ Substrate, value.var="SubPct", fun=mean)
-
-# Set na to 0
-mydf[is.na(mydf)] <- 0
-mydf <- as.data.frame(mydf)
-mydf[3:13] <- round(mydf[3:13], digits=0)
-
-# Determine dominant substrates, recode all substrates less than 25%
-threshold <- 40
-mydf[3:13][ mydf[3:13] <= threshold ] <- 0
-
-cat("Calculating substrate greater than", threshold,"\n")
-
-# Save as csv
-write_csv(mydf, "./Data/UpdatedObservations/Quadrat_CalcSub.csv")
+# ### 3. Summarise substrate for each quadrat ###
+# ###############################################
+# substrt <- dplyr::select(quad, HKey, Quadrat, DepthCat, Substrate1, Sub1Pct, Substrate2, Sub2Pct, Substrate3, Sub3Pct)
+# substrt$HKey <- as.character(substrt$HKey)
+# substrt$DepthCat <- as.character(substrt$DepthCat)
+# 
+# # Remove quadrat 0 b/c it has no substrate records
+# substrt <- filter(substrt, Quadrat!=0)
+# 
+# # Separate data for each substrate field
+# primary <- dplyr::select(substrt, HKey, Quadrat, DepthCat, Substrate1, Sub1Pct)
+# names(primary)[names(primary)=="Substrate1"] <- "Substrate"
+# names(primary)[names(primary)=="Sub1Pct"] <- "SubPct"
+# secondary <- dplyr::select(substrt, HKey, Quadrat, DepthCat, Substrate2, Sub2Pct)
+# names(secondary)[names(secondary)=="Substrate2"] <- "Substrate"
+# names(secondary)[names(secondary)=="Sub2Pct"] <- "SubPct"
+# tertiary <- dplyr::select(substrt, HKey, Quadrat, DepthCat, Substrate3, Sub3Pct)
+# names(tertiary)[names(tertiary)=="Substrate3"] <- "Substrate"
+# names(tertiary)[names(tertiary)=="Sub3Pct"] <- "SubPct"
+# 
+# # Combine rows into one long and narrow table
+# sub.123 <- bind_rows(primary,secondary,tertiary)
+# # Recode to substrate types
+# sub.123$Substrate <- as.factor(sub.123$Substrate)
+# sub.123$Substrate <- plyr::revalue(sub.123$Substrate,
+#                                 c("0"="Wd.Bark","1"="Bdrk.smth","2"="Bdrk.crv","3"="Boulders",
+#                                   "4"="Cobble","5"="Gravel","6"="Pea.Gravel","7"="Sand","9"="Mud",
+#                                   "10"="Crsh.Shell","11"="Chnk.Shell"))
+# 
+# # Remove empty records (locations with only primary or secondary substrates recorded)
+# sub.123 <- filter(sub.123, SubPct!='0')
+# sub.123 <- sub.123[complete.cases(sub.123[ , 4]),]
+# 
+# mydf <- data.table(sub.123)
+# head(mydf)
+# 
+# # Spread data to a wide table with one column for each possible substrate code
+# #sub.cast <- reshape2::dcast(sub.123, HKey + DepthCat + Quadrat ~ Substrate, fun.aggregate = sum, value.var = "SubPct" ) # reshape2 has been retired! 
+# mydf <- dcast(mydf, HKey + DepthCat ~ Substrate, value.var="SubPct", fun=mean)
+# 
+# # Set na to 0
+# mydf[is.na(mydf)] <- 0
+# mydf <- as.data.frame(mydf)
+# mydf[3:13] <- round(mydf[3:13], digits=0)
+# 
+# # Determine dominant substrates, recode all substrates less than 25%
+# threshold <- 40
+# mydf[3:13][ mydf[3:13] <= threshold ] <- 0
+# 
+# cat("Calculating substrate greater than", threshold,"\n")
+# 
+# # Save as csv
+# write_csv(mydf, "./Data/UpdatedObservations/Quadrat_CalcSub.csv")
 
 ### 4. Build new table with all observations ###
 ####################################################### 
-final <- left_join(df, mydf, by=c("HKey","DepthCat"))
-final[is.na(final)] <- 0
-final$TransDepth <- paste0(df$HKey,"_",df$DepthCat)
-final <- final[c(16,1:15)]
 
-cat("Saving final substrate csv","\n")
-write_csv(final, "./Data/UpdatedObservations/DepthCat_CalcSub.csv")
+#**** With RMSM substrate category ****#
+final <- left_join(df, quad, by=c("HKey","DepthCat"))
+#final[is.na(final)] <- 0
+final$TransDepth <- paste0(final$HKey,"_",final$DepthCat)
+final <- final[,c(21,3,4,15,16)]
+
+cat("Saving final substrate csv with RMSM","\n")
+write_csv(final, "./Data/UpdatedObservations/DepthCat_CalcSub_RMSM.csv")
+
+
+
+
+#**** With 11 different substrate categories ****#
+# final <- left_join(df, mydf, by=c("HKey","DepthCat"))
+# final[is.na(final)] <- 0
+# final$TransDepth <- paste0(df$HKey,"_",df$DepthCat)
+# final <- final[c(16,1:15)]
+# 
+# cat("Saving final substrate csv","\n")
+# write_csv(final, "./Data/UpdatedObservations/DepthCat_CalcSub.csv")
+
+
+
+
 
 # ### 5. Summarise calculations for site X species matrix ###
 # ###########################################################

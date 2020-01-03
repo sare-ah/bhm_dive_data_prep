@@ -11,6 +11,7 @@
  
 # TO DO:
 # Add some code to export all final records with distance to nearest fetch point greater than 100 m and plot
+# Check projections of input data, fetch points, output data
 
 # Start fresh
 rm(list=ls())
@@ -18,20 +19,53 @@ rm(list=ls())
 # Check which version of R is being used and reset if necessary
 Sys.getenv("R_ARCH") 
 
-# Set working directory
-setwd("C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep")
-outdir <- "./Data/UpdatedObservations/"
-
 # Load required packages 
 if (!require('sp')) install.packages('sp'); library('sp')
 if (!require('rgdal')) install.packages('rgdal'); library('rgdal')
-if (!require('dplyr')) install.packages('dplyr'); library('dplyr')
+if (!require('tidyverse')) install.packages('tidyverse'); library('tidyverse')
+
+cat("Calculating transect lat/lon...","\n")
+
+# Go to parent directory
+setwd("C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep")
+outdir <- "./Data/UpdatedObservations/"
+
+#----------------------------------------------------------------------------#
+### Load survey data
+quads <- read.csv("./Data/ExtractedData/Quadrat.csv", header=T)
+hdrs <- read.csv( "./Data/ExtractedData/Headers.csv", header=T, sep="," )
+hdrs <- dplyr::select(hdrs,HKey,Survey,Year,Month,Transect,LatDegStart,LatMinStart,LonDegStart,LonMinStart,LatDegEnd,LatMinEnd,LonDegEnd,LonMinEnd)
+quads <- dplyr::select(quads, HKey,Quadrat,DepthCat, CorDepthM)
+quads$TransDepth <- paste0(quads$HKey,"_",quads$DepthCat)
+
+# Join two together
+dat <- dplyr::left_join(quads, hdrs, by="HKey")
+head(dat)
+
+# Calculate x,y
+dat$LatStart<-(dat$LatDegStart+(dat$LatMinStart/60))
+dat$LatEnd<-(dat$LatDegEnd+(dat$LatMinEnd/60))
+dat$LonStart<-(-1)*abs(dat$LonDegStart+(dat$LonMinStart/60))
+dat$LonEnd<-(-1)*abs(dat$LonDegEnd+(dat$LonMinEnd/60))
+
+# remove NAs in lat and lon
+dat <- dat[complete.cases(dat[, c("LatStart","LatEnd","LonStart","LonEnd")]),]
+# remove duplicate IDs - should be only one record per transect
+trans.coords <- dplyr::select(dat, TransDepth, HKey,DepthCat,LatStart,LatEnd,LonStart,LonEnd)
+trans.coords <- trans.coords[!duplicated(trans.coords$TransDepth),] 
+# reorder columns
+
+head(trans.coords)
+
+# plots in the middle of Hecate Strait - needs to be removed from the database
+trans.coords <- dplyr::filter(trans.coords, HKey!='1425')
 
 cat("Adding Fetch values to transect start position...","\n")
 
 # Read in transects and fetch spatial file
 #=========================================
-df <- read.csv('./Data/UpdatedObservations/Transect.coords.csv') # WGS
+#df <- read.csv('./Data/UpdatedObservations/Transect.coords.csv') # WGS
+df <- trans.coords
 fetch <- readOGR(dsn = "F:/GIS/Fetch", layer = "Fetch_AllRegions") # NAD 83
 proj4string(fetch)
 

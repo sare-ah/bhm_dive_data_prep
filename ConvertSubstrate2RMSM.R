@@ -71,8 +71,14 @@ quad <- filter(quad, Quadrat!=0)
 # Read in substrate category table
 sub.cat <- read.csv( "./Data/LookupTbls/SubstrateCategories.csv", header=T, sep="," )
 
+# Remove data without Substrate1 *** TO DO *** Look into why this is later...
+quad <- dplyr::filter(quad, !is.na(Substrate1))
+
 # Match substrateID to substrate category
 quad.sub <- dplyr::left_join(quad, sub.cat, by=c("Substrate1", "Substrate2"))
+
+# Check your work
+summary(quad.sub)
 
 # Save updated quadrat table
 write.csv(quad.sub, "./Data/UpdatedObservations/Quadrat_RMSM.csv", row.names = F)
