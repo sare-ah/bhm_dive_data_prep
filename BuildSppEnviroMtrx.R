@@ -20,7 +20,7 @@ library(rgdal)
 library(tidyverse)
 library(mapview)
 
-region <- "all" # options = ....
+region <- "AllRegions" # options = ....
 
 # Set working directory
 setwd("C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep")
@@ -83,20 +83,22 @@ saveRDS(addRegions, "./Data/RDS/sppByRegion_Dataframe.rds")
 sppByRegion <- c()
 sppByRegion <- addRegions %>%
   split(addRegions$Region) 
-# Save as RDS
+# Remove region column in each element of list
 sppByRegion <-lapply(sppByRegion, function(x) { x["Region"] <- NULL; x })
+# Save as RDS on local drive and on spatial datasets
 saveRDS(sppByRegion, "./Data/RDS/sppByRegion.rds")
+#saveRDS(sppByRegion, "T:/Benthic_Habitat_Mapping/Data/Species by Site Matrices/sppByRegion.rds")
 
     
 # Combine with spatial points for one region
 #-------------------------------------------
-env.nmes <- env.nmes[,1] # convert to vector
-colnames(sp@data) <- env.nmes
+#env.nmes <- env.nmes[,1] # convert to vector
+
+colnames(sp@data) 
 spts <- as.data.frame( cbind( sp@data,sp@coords ) )
 colnames(spts)[colnames(spts)=="coords.x1"] <- "x"
 colnames(spts)[colnames(spts)=="coords.x2"] <- "y"
 spts$bathy <- NULL 
-spts <- spts[c(2,1,10,11,3,4,5,6,7,8,9)]
 
 fetch <- dplyr::select(fetch, TransDepth, Sum_Fetch)
 df <- left_join(spts, fetch, by=c("TransDepth"))
@@ -110,7 +112,7 @@ summary(df)
 df <- df %>% drop_na()
 
 final <- inner_join(df, sppAll, by="TransDepth")
-#head(final)
+head(final,3)
 cat("All species ",dim(final),"\n")
 # Save as csv
 filename <- paste0("T:/Benthic_Habitat_Mapping/Data/Species by Site Matrices/",region,"byDepthCat_AllSpp.csv")
