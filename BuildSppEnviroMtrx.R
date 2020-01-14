@@ -120,9 +120,9 @@ write_csv(final, filename)
 
 # Create an RDS file of species names
 #------------------------------------
-colnames(sppAll)
-species.nmes <- colnames(sppAll)
-saveRDS(species.nmes, "C:/Users/daviessa/Documents/R/PROJECTS_MY/CommunityAssemblages/RDS/species.nmes.RDS")
+colnames(sppAll[,-1])
+species <- colnames(sppAll[,-1])
+saveRDS(species, "C:/Users/daviessa/Documents/R/PROJECTS_MY/CommunityAssemblages/RDS/species.RDS")
 
 
 
