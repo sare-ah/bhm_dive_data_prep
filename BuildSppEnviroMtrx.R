@@ -118,5 +118,13 @@ cat("All species ",dim(final),"\n")
 filename <- paste0("T:/Benthic_Habitat_Mapping/Data/Species by Site Matrices/",region,"byDepthCat_AllSpp.csv")
 write_csv(final, filename)
 
+# Create an RDS file of species names
+#------------------------------------
+colnames(sppAll)
+species.nmes <- colnames(sppAll)
+saveRDS(species.nmes, "C:/Users/daviessa/Documents/R/PROJECTS_MY/CommunityAssemblages/RDS/species.nmes.RDS")
+
+
+
 
 
