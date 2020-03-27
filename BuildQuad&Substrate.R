@@ -29,45 +29,60 @@ summary(quad.sub)
 # Add RMSM to species by quadrat matrix
 #--------------------------------------
 
-# # Subset substrate df
-# quad.sub <- quad.sub %>% 
-#   dplyr::select(HKey, Quadrat, RMSM.cat) %>% 
-#   mutate(HKeyQuad = paste0(HKey, "_", Quadrat))
-# 
-# # Join df together
-# sppQuadRMSM <- left_join(sppQuad, quad.sub, by=c("HKey","HKeyQuad"))
-# summary(sppQuadRMSM)
-# 
-# # Check that there are no NA's and remove records
-# apply(sppQuadRMSM, 2, function(x) any(is.na(x)))
-# sppQuadRMSM <- sppQuadRMSM[complete.cases(sppQuadRMSM), ]
-# 
-# # Set up for Indicator Species Analysis
-# sppQuadRMSM <- sppQuadRMSM %>% 
-#   rename(ID = HKeyQuad) %>% 
-#   rename(cl = RMSM.cat) %>% 
-#   dplyr::select(-c(HKey, Quadrat)) %>% 
-#   dplyr::select(-ID, everything())
-# head(sppQuadRMSM, 3) 
-# 
-# # Save as csv and RDS
-# write_csv(sppQuadRMSM, "AllSppByQuad_RMSM.csv")
-# saveRDS(sppQuadRMSM, "C:/Users/daviessa/Documents/R/PROJECTS_MY/CommunityAssemblages/Results/byQuad_RMSM/speciesFullCl.RDS")
+# Subset substrate df
+quad.sub <- quad.sub %>%
+ dplyr::select(HKey, Quadrat, RMSM.cat) %>%
+ mutate(HKeyQuad = paste0(HKey, "_", Quadrat))
+
+# Join df together
+sppQuadRMSM <- left_join(sppQuad, quad.sub, by=c("HKey","HKeyQuad"))
+summary(sppQuadRMSM)
+
+# Check that there are no NA's and remove records
+apply(sppQuadRMSM, 2, function(x) any(is.na(x)))
+sppQuadRMSM <- sppQuadRMSM[complete.cases(sppQuadRMSM), ]
+
+# Set up for Indicator Species Analysis
+sppQuadRMSM <- sppQuadRMSM %>%
+ rename(ID = HKeyQuad) %>%
+ rename(cl = RMSM.cat) %>%
+ dplyr::select(-c(HKey, Quadrat)) %>%
+ dplyr::select(-ID, everything())
+head(sppQuadRMSM, 3)
+
+# Save as csv and RDS
+write_csv(sppQuadRMSM, "AllSppByQuad_RMSM.csv")
+saveRDS(sppQuadRMSM, "C:/Users/daviessa/Documents/R/PROJECTS_MY/CommunityAssemblages/Results/byQuad_RMSM/speciesFullCl.RDS")
 
 
 # Build frequency table for groupings (substrate types)
 #------------------------------------------------------
 
-# # Extract frequency of values in cl field using count()
-# df <- count(sppQuadRMSM, cl)
-# 
-# # Rename columns
-# colnames(df) <- c("cl","Freq")
+# Extract frequency of values in cl field using count()
+df <- count(sppQuadRMSM, cl)
+ 
+# Rename columns
+colnames(df) <- c("cl","Freq")
+
+# Order clusters by frequency order 
+order.cl <- function(x){
+  order <- data.frame( order=seq( 1:nrow(x) ),x[order(-x$Freq),] ) 
+  order$cumsum <- cumsum( order$Freq )
+  order$cumpercent <- round( order$cumsum/max(order$cumsum), 2 )
+  order$percent <- round( order$Freq/sum(order$Freq),2 )
+  return(order)
+}
+cluster.frq <- order.cl(df)
+
+# Save output
+saveRDS( cluster.frq, "C:/Users/daviessa/Documents/R/PROJECTS_MY/CommunityAssemblages/Results/byQuad_RMSM/cluster.freq.RDS" )
+cluster.frq
 
 
 
+#--------------------------------------------
 # Add BoP BType1 to species by quadrat matrix
-#--------------------------------------
+#--------------------------------------------
 
 # Subset substrate df
 quad.bop1 <- quad.sub %>% 

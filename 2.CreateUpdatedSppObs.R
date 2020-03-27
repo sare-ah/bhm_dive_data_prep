@@ -48,7 +48,7 @@ UsePackages <- function( pkgs, update=FALSE, locn="http://cran.rstudio.com/" ) {
 }  # End UsePackages function
 
 # Make packages available
-UsePackages( pkgs=c("dplyr","reshape") ) 
+UsePackages( pkgs=c("tidyverse","reshape") ) 
 
 ##############
 # Pseudocode

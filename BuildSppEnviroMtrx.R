@@ -6,7 +6,7 @@
 # Author:     Sarah Davies
 #             Sarah.Davies@dfo-mpo.gc.ca
 #             250-756-7124
-# Date:       October 2nd, 2019
+# Date:       March, 2020
 #########################################################################
 
 # start fresh
@@ -36,9 +36,8 @@ quad <- read.csv( "./Data/ExtractedData/Quadrat.csv", header=T, sep=",", strings
 hdrs <- read.csv( "./Data/ExtractedData/Headers.csv", header=T, sep=",", stringsAsFactors=F )
 dsn <- "C:/Users/daviessa/Documents/R/PROJECTS_OTHERS/SpatializeDiveTransects/ByDepthCat"
 sp <- readOGR(dsn=dsn, layer="All_SpatPts_DepthCat", stringsAsFactors = F)
-env.nmes <- read.csv("C:/Users/daviessa/Documents/R/PROJECTS_OTHERS/SpatializeDiveTransects/ByDepthCat/envNames.csv")
+env <- read.csv( "./Data/UpdatedObservations/TransDepth_wEnv.csv", header=T, sep=",", stringsAsFactors=F )
 mapview(sp)
-
 
 # Organize field names
 #---------------------
@@ -75,6 +74,7 @@ df <- dplyr::select(df, TransDepth, Region)
 addRegions <- right_join(df, sppAll, by="TransDepth")
 row.names(addRegions) <- addRegions$TransDepth
 addRegions$TransDepth <- NULL
+head(addRegions)
 
 # Save large dataframe as RDS
 saveRDS(addRegions, "./Data/RDS/sppByRegion_Dataframe.rds")
@@ -113,10 +113,27 @@ df <- df %>% drop_na()
 
 final <- inner_join(df, sppAll, by="TransDepth")
 head(final,3)
-cat("All species ",dim(final),"\n")
-# Save as csv
-filename <- paste0("T:/Benthic_Habitat_Mapping/Data/Species by Site Matrices/",region,"byDepthCat_AllSpp.csv")
-write_csv(final, filename)
+# cat("All species ",dim(final),"\n")
+# # Save as csv
+# #filename <- paste0("T:/Benthic_Habitat_Mapping/Data/Species by Site Matrices/",region,"byDepthCat_AllSpp.csv")
+# write_csv(final, filename)
+
+# Add environmental data
+#-----------------------
+head(sppAll,3)
+head(env,3)
+env <- dplyr::select(env, -c(HKey,optional,bathy.1))
+env <- env[c(1,3,4,2,5,6,7,8,9)]
+
+subst$TransDepth <- paste0(subst$HKey, "_", subst$DepthCat)
+subst <- dplyr::select(subst, TransDepth, substrt)
+head(subst,3)
+env.substr <- right_join(subst, env, by="TransDepth")
+head(env.substr,3)
+env.substr <- env.substr[c(1,3,4,2,5,6,7,8,9,10)]
+
+final_env <- right_join(sppAll, env.substr, by="TransDepth") 
+head(final_env,3)
 
 # Create an RDS file of species names
 #------------------------------------
@@ -124,6 +141,34 @@ colnames(sppAll[,-1])
 species <- colnames(sppAll[,-1])
 saveRDS(species, "C:/Users/daviessa/Documents/R/PROJECTS_MY/CommunityAssemblages/RDS/species.RDS")
 
+# Create an RDS file of species & env data
+#-----------------------------------------
+colnames(final_env[,-1])
+spp_env <- colnames(final_env[,-1])
+saveRDS(final_env, "C:/Users/daviessa/Documents/R/PROJECTS_MY/CommunityAssemblages/RDS/NCCspp.env.RDS")
+head(final_env,3)
+
+# Create an SHP file of species & env data
+#-----------------------------------------
+# Build shapefile
+coordinates(final_env) <- c("coords.x1", "coords.x2")
+
+# Coordinate reference system (http://spatialreference.org
+# BC Albers
+crs.geo <-  CRS("+proj=aea +lat_1=50 +lat_2=58.5 +lat_0=45 +lon_0=-126 +x_0=1000000 +y_0=0 +datum=NAD83 +units=m +no_defs")
+
+# define projection
+proj4string(final_env) <- crs.geo
+
+# plot
+plot(final_env)
+
+filename <- "NCCspp.env"
+dsn <- "C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep/Data/SHP"
+writeOGR(final_env, dsn=dsn, layer=filename, driver="ESRI Shapefile", overwrite_layer = TRUE )
+cat("Fini!")
+
+mapview(final_env)
 
 
 
