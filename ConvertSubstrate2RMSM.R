@@ -24,7 +24,7 @@ Sys.getenv("R_ARCH")
 # Then you will have to open and close R for the changes to take effect
 
 # Set working directory
-setwd("C:/Users/daviessa/Documents/R/PROJECTS_MY/DiveSurveys_DataPrep")
+setwd("C:/Users/daviessa/Documents/CURRENT_DATA")
 
 ################ Functions #####################################
 ################################################################
@@ -57,7 +57,8 @@ UsePackages( pkgs=c("tidyverse","reshape") )
 # 1. Read input data 
 #####################
 # Read in quadrat table that was extracted from the MS Access db using the script ExtractDataFromMSAccess.R
-quad <- read.csv( "./Data/ExtractedData/Quadrat.csv", header=T, sep="," )
+quad <- read.csv( "./ExtractedData/Quadrat.csv", header=T, sep="," )
+dim(quad)
 
 # remove algae percentages
 quad <- dplyr::select(quad, 1:12)
@@ -67,19 +68,43 @@ quad <- dplyr::select(quad, 1:12)
 ################################################################
 # Need to remove quad 0 from each transect - it represents the starting point for each transect, only depth & time recorded
 quad <- filter(quad, Quadrat!=0)
+dim(quad)
+
+# As a check calculate the number of HKey and Quadrat combinations
+key.combos <- quad %>% 
+  dplyr::filter(HKey, Quadrat) 
+dim(unique(key.combos))
 
 # Read in substrate category table
-sub.cat <- read.csv( "./Data/LookupTbls/SubstrateCategories.csv", header=T, sep="," )
+sub.cat <- read.csv( "./LookupTbls/SubstrateCategories.csv", header=T, sep="," )
 
 # Remove data without Substrate1 *** TO DO *** Look into why this is later...
 quad <- dplyr::filter(quad, !is.na(Substrate1))
+dim(quad)
 
 # Match substrateID to substrate category
 quad.sub <- dplyr::left_join(quad, sub.cat, by=c("Substrate1", "Substrate2"))
 
 # Check your work
 summary(quad.sub)
+dim(quad.sub)
 
 # Save updated quadrat table
-write.csv(quad.sub, "./Data/UpdatedObservations/Quadrat_RMSM.csv", row.names = F)
+write.csv(quad.sub, "./UpdatedObservations/Quadrat_RMSM.csv", row.names = F)
+
+# Add Headers details to recordset
+hdrs <- read.csv( "./ExtractedData/Headers.csv", header=T, sep="," )
+dim(hdrs)
+
+# Calculate x,y
+hdrs$LatStart<-(hdrs$LatDegStart+(hdrs$LatMinStart/60))
+hdrs$LatEnd<-(hdrs$LatDegEnd+(hdrs$LatMinEnd/60))
+hdrs$LonStart<-(-1)*abs(hdrs$LonDegStart+(hdrs$LonMinStart/60))
+hdrs$LonEnd<-(-1)*abs(hdrs$LonDegEnd+(hdrs$LonMinEnd/60))
+
+# Select columns of interest
+hdrs <- dplyr::select(hdrs, HKey, LatStart, LonStart, LatEnd, LonEnd)
+head(hdrs)
+
+# Join hdrs and quad.sub
 
